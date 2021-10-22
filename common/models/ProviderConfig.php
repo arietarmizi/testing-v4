@@ -35,12 +35,8 @@ class ProviderConfig extends ActiveRecord
     const GROUP_ATTRIBUTE_KEY = 'serviceKey';
     const GROUP_RESPONSE_KEY  = 'responseKey';
 
-    const ATTRIBUTE_KEY_SENDER             = 'sender';
-    const ATTRIBUTE_KEY_RECIPIENT          = 'recipient';
-    const ATTRIBUTE_KEY_MULTIPLE_RECIPIENT = 'recipients';
-    const ATTRIBUTE_KEY_TITLE              = 'title';
-    const ATTRIBUTE_KEY_MESSAGE            = 'message';
-    const ATTRIBUTE_KEY_LOGS               = 'logs';
+    const ATTRIBUTE_BODY_PARAMS = 'bodyParams';
+    const ATTRIBUTE_KEY_LOGS    = 'logs';
 
     const RESPONSE_KEY_MESSAGE = 'responseMessage';
     const RESPONSE_KEY_ID      = 'responseId';

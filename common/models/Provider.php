@@ -209,16 +209,8 @@ class Provider extends ActiveRecord
                 $bodyIdentifier = $config->key;
                 $keys           = explode('.', $config->value);
 
-                if ($bodyIdentifier == ProviderConfig::ATTRIBUTE_KEY_SENDER) {
+                if ($bodyIdentifier == ProviderConfig::ATTRIBUTE_BODY_PARAMS) {
                     ArrayHelper::setValue($this->_requestBody, $keys, $this->sender);
-                } elseif ($bodyIdentifier == ProviderConfig::ATTRIBUTE_KEY_RECIPIENT) {
-                    $this->recipientKey = $config->value;
-                } elseif ($bodyIdentifier == ProviderConfig::ATTRIBUTE_KEY_MULTIPLE_RECIPIENT) {
-                    $this->recipientsKey = $config->value;
-                } elseif ($bodyIdentifier == ProviderConfig::ATTRIBUTE_KEY_TITLE) {
-                    ArrayHelper::setValue($this->_requestBody, $keys, $this->title);
-                } elseif ($bodyIdentifier == ProviderConfig::ATTRIBUTE_KEY_MESSAGE) {
-                    ArrayHelper::setValue($this->_requestBody, $keys, $this->message);
                 }
             }
         }
