@@ -76,6 +76,7 @@ class SetupController extends Controller
         $provider->type             = Provider::TYPE_TOKOPEDIA;
         $provider->host             = 'https://fs.tokopedia.net/';
         $provider->authUrl          = 'https://accounts.tokopedia.com/';
+        $provider->proxy            = '103.30.246.27:3128';
         $provider->authMethod       = Provider::AUTH_METHOD_BEARER;
         $provider->requestMethod    = Provider::REQUEST_METHOD_POST;
         $provider->responseLanguage = Provider::RESPONSE_LANGUAGE_JSON;
