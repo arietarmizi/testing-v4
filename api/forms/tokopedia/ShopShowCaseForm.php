@@ -3,19 +3,17 @@
 namespace api\forms\tokopedia;
 
 use api\components\BaseForm;
+use common\models\Provider;
 
 class ShopShowCaseForm extends BaseForm
 {
 
-    public $shopId;
-    public  $mode;
+    public  $fsId = '15394';
     private $_response;
 
     public function rules()
     {
         return [
-            [['shopId'], 'required'],
-//            [['page', 'page_count', 'hide_zero', 'display'], 'string'],
         ];
     }
 
@@ -25,10 +23,14 @@ class ShopShowCaseForm extends BaseForm
 
     public function submit()
     {
-        $provider          = \Yii::$app->tokopediaProvider;
-        $providerResponses = $provider->send();
+        $provider                 = \Yii::$app->tokopediaProvider;
+        $provider->_url           = 'v1/showcase/fs/' . $this->fsId . '/get';
+        $provider->_requestMethod = Provider::REQUEST_METHOD_GET;
+        $provider->_query         = [
+            'shop_id' => '11960781'
+        ];
+        $this->_response          = $provider->send();
         return true;
-
     }
 
     public function response()

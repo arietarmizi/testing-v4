@@ -2,15 +2,12 @@
 
 namespace common\models;
 
-
 use api\components\HttpException;
 use Carbon\Carbon;
 use common\base\ActiveRecord;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
-use Lcobucci\JWT\Parser;
-use phpDocumentor\Reflection\Types\Self_;
 use Psr\Http\Message\ResponseInterface;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
@@ -25,7 +22,6 @@ use yii\helpers\Json;
  * @property string           $type
  * @property string           $authMethod
  * @property string           $authUser
- * @property string           $authKey
  * @property string           $host
  * @property string           $authUrl
  * @property string           $token
@@ -35,6 +31,7 @@ use yii\helpers\Json;
  * @property string           $requestBody
  * @property int              $requestTimeout
  * @property string           $responseLanguage
+ * @property string           $proxy
  * @property string           $status
  * @property string           $createdAt
  * @property string           $updatedAt
@@ -71,21 +68,18 @@ class Provider extends ActiveRecord
 
     const DEFAULT_REQUEST_TIMEOUT = 100;
 
-    public $sender;
-    public $title;
-    public $message;
-    public $recipients;
+    public $response;
     public $logs;
 
     /** @var Client */
     private $_client;
-    private $_headers      = [];
-    private $_options      = ['verify' => false];
-    private $_verify       = false;
-    private $_query        = [];
-    private $_requestBody  = [];
-    private $recipientKey  = false;
-    private $recipientsKey = false;
+    private $_headers     = [];
+    private $_options     = ['verify' => false];
+    private $_verify      = false;
+    public  $_requestMethod;
+    public  $_query       = [];
+    public  $_requestBody = [];
+    public  $_url;
 
     public static function authMethods()
     {
@@ -156,22 +150,17 @@ class Provider extends ActiveRecord
     public function afterFind()
     {
         parent::afterFind();
-        $this->getToken();
-//        $this->validateToken();
+        $this->validateToken();
     }
 
     private function validateToken()
     {
-        if (!$this->authKey) {
+        if (!$this->token && !$this->tokenExpiredAt) {
             $this->getToken();
-
         } else {
-            $token       = (new Parser())->parse((string)$this->authKey);
-            $expiredDate = $token->getClaim('exp');
-            if ($expiredDate < time()) {
+            if (Carbon::now() >= $this->tokenExpiredAt) {
                 $this->getToken();
             }
-
         }
     }
 
@@ -181,7 +170,6 @@ class Provider extends ActiveRecord
             $client = new Client([
                 'timeout' => ArrayHelper::getValue($this, 'requestTimeout', 10),
                 'verify'  => $this->_verify,
-//                'proxy'   => '103.30.246.27:3128'
             ]);
 
             $authConfig = ArrayHelper::getValue($this->configGroup, 'authorization', []);
@@ -207,6 +195,8 @@ class Provider extends ActiveRecord
                         $this->tokenExpiredIn = ArrayHelper::getValue($responseContents, 'expires_in');
                         $this->tokenExpiredAt = Carbon::now()->subMinutes(30)->addSecond($this->tokenExpiredIn)->format('Y-m-d H:i:s');
                         $this->save();
+                    } else if ($this->type === self::TYPE_SHOPEE) {
+
                     }
                 }
             }
@@ -229,6 +219,17 @@ class Provider extends ActiveRecord
 
     public function send()
     {
+        $this->setClient();
+        $this->setRequestBody();
+        $client   = $this->getClient();
+        $response = $client->request($this->_requestMethod, $this->host . $this->_url, $this->getRequestOptions());
+        return [
+            [
+                'code'     => $response->getStatusCode(),
+                'contents' => $this->getResponseContents($response)
+            ]
+        ];
+
 
     }
 
@@ -239,6 +240,13 @@ class Provider extends ActiveRecord
 
     public function setClient()
     {
+//        $logger = new \Monolog\Logger('GuzzleLog');
+//        $logger->pushHandler(new \Monolog\Handler\StreamHandler(\Yii::getAlias('@runtime') . '/logs/guzzle.log'), \Monolog\Logger   ::DEBUG);
+//        $stack = HandlerStack::create();
+//        $stack->push(Middleware::log(
+//            $logger, new \GuzzleHttp\MessageFormatter('{req_headers} - {req_body} {res_body}')
+//        ));
+
         $this->addAuthorization();
         $this->addHeaders();
         $this->setRequestOptions();
@@ -246,7 +254,8 @@ class Provider extends ActiveRecord
             'base_uri'       => $this->host,
             'timeout'        => ArrayHelper::getValue($this, 'requestTimeout', 10),
             'headers'        => $this->_headers,
-            'requestOptions' => $this->_options
+            'requestOptions' => $this->_options,
+//            'handler'        => $stack,
         ]);
     }
 
@@ -256,10 +265,6 @@ class Provider extends ActiveRecord
             if ($config->group == ProviderConfig::GROUP_ATTRIBUTE_KEY) {
                 $bodyIdentifier = $config->key;
                 $keys           = explode('.', $config->value);
-
-                if ($bodyIdentifier == ProviderConfig::ATTRIBUTE_BODY_PARAMS) {
-                    ArrayHelper::setValue($this->_requestBody, $keys, $this->sender);
-                }
             }
         }
     }
@@ -270,16 +275,17 @@ class Provider extends ActiveRecord
             'verify' => $this->_verify,
         ];
 
-        if ($this->requestMethod == self::REQUEST_METHOD_GET) {
-            $this->_query      = ArrayHelper::merge($this->_query, $this->_requestBody);
-            $this->requestBody = [];
-        }
 
-        $requestOptions['query'] = $this->_query;
-        if ($this->requestBody) {
-            $requestOptions[$this->requestBody] = $this->_requestBody;
-        }
+        if ($this->_query) {
+            $requestOptions['query'] = $this->_query;
 
+        }
+        if ($this->_requestBody) {
+            $requestOptions['json'] = $this->_requestBody;
+        }
+        if ($this->proxy) {
+            $requestOptions['proxy'] = $this->proxy;
+        }
         return $requestOptions;
 
     }
@@ -292,20 +298,19 @@ class Provider extends ActiveRecord
 
     private function setRequestOptions()
     {
-        $this->_query       = ArrayHelper::getValue($this->configGroup, ProviderConfig::GROUP_QUERY, []);
-        $this->_requestBody = ArrayHelper::getValue($this->configGroup, ProviderConfig::GROUP_JSON_BODY, []);
-
+        $this->_query       = isset($this->_query) ? ArrayHelper::merge(ArrayHelper::getValue($this->configGroup, ProviderConfig::GROUP_QUERY, []), $this->_query) : ArrayHelper::getValue($this->configGroup, ProviderConfig::GROUP_QUERY, []);
+        $this->_requestBody = isset($this->_requestBody) ? ArrayHelper::merge(ArrayHelper::getValue($this->configGroup, ProviderConfig::GROUP_JSON_BODY, []), $this->_requestBody) : ArrayHelper::getValue($this->configGroup, ProviderConfig::GROUP_JSON_BODY, []);
     }
 
     private function addAuthorization()
     {
         if ($this->authMethod) {
             if ($this->authMethod == self::AUTH_METHOD_BASIC) {
-                $this->_headers['Authorization'] = 'Basic ' . base64_encode($this->authUser . ":" . $this->authKey);
+                $this->_headers['Authorization'] = 'Basic ' . base64_encode($this->authUser . ":" . $this->token);
             } elseif ($this->authMethod == self::AUTH_METHOD_BEARER) {
-                $this->_headers['Authorization'] = 'Bearer ' . $this->authKey;
+                $this->_headers['Authorization'] = 'Bearer ' . $this->token;
             } else {
-                $this->_headers['Authorization'] = $this->authUser . $this->authKey;
+                $this->_headers['Authorization'] = $this->authUser . $this->token;
             }
         }
     }

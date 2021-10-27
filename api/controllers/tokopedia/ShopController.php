@@ -35,7 +35,7 @@ class ShopController extends Controller
     protected function verbs()
     {
         return [
-            'showcase' => ['post'],
+            'showcase' => ['get'],
         ];
     }
 }
