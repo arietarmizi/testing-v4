@@ -84,8 +84,9 @@ class SetupController extends Controller
 
         $providerConfigs = [
             ProviderConfig::GROUP_AUTHORIZATION => [
-                'clientId'     => '69afbc90fbb3412383b7ef274a0d8993',
-                'clientSecret' => '502c41a706104fe39ab31f8823a15cf4',
+                ProviderConfig::ATTRIBUTE_KEY_AUTH_METHOD => Provider::AUTH_METHOD_BASIC,
+                'username'                                => '69afbc90fbb3412383b7ef274a0d8993',
+                'password'                                => '502c41a706104fe39ab31f8823a15cf4',
             ],
         ];
 

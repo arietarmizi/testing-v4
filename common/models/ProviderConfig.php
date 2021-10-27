@@ -35,8 +35,9 @@ class ProviderConfig extends ActiveRecord
     const GROUP_ATTRIBUTE_KEY = 'serviceKey';
     const GROUP_RESPONSE_KEY  = 'responseKey';
 
-    const ATTRIBUTE_BODY_PARAMS = 'bodyParams';
-    const ATTRIBUTE_KEY_LOGS    = 'logs';
+    const ATTRIBUTE_BODY_PARAMS     = 'bodyParams';
+    const ATTRIBUTE_KEY_LOGS        = 'logs';
+    const ATTRIBUTE_KEY_AUTH_METHOD = 'authMethod';
 
     const RESPONSE_KEY_MESSAGE = 'responseMessage';
     const RESPONSE_KEY_ID      = 'responseId';
@@ -57,18 +58,6 @@ class ProviderConfig extends ActiveRecord
             self::GROUP_AUTHORIZATION => \Yii::t('app', 'Authorization'),
             self::GROUP_ATTRIBUTE_KEY => \Yii::t('app', 'Attribute Key'),
             self::GROUP_RESPONSE_KEY  => \Yii::t('app', 'Response Key'),
-        ];
-    }
-
-    public static function attributeKeys()
-    {
-        return [
-            self::ATTRIBUTE_KEY_SENDER             => \Yii::t('app', 'Sender'),
-            self::ATTRIBUTE_KEY_RECIPIENT          => \Yii::t('app', 'Recipient'),
-            self::ATTRIBUTE_KEY_MULTIPLE_RECIPIENT => \Yii::t('app', 'Recipients'),
-            self::ATTRIBUTE_KEY_TITLE              => \Yii::t('app', 'Title'),
-            self::ATTRIBUTE_KEY_MESSAGE            => \Yii::t('app', 'Message'),
-            self::ATTRIBUTE_KEY_LOGS               => \Yii::t('app', 'Logs'),
         ];
     }
 

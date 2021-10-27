@@ -29,6 +29,9 @@ class SiteController extends Controller
         return $behaviors;
     }
 
+    public function actionPush(){
+
+    }
     public function actionIndex()
     {
         $response = new Response();

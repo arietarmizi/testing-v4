@@ -1,6 +1,6 @@
 <?php
 
-namespace api\forms;
+namespace api\forms\tokopedia;
 
 use api\components\BaseForm;
 
@@ -8,14 +8,14 @@ class ShopShowCaseForm extends BaseForm
 {
 
     public $shopId;
-
-    public $mode;
+    public  $mode;
+    private $_response;
 
     public function rules()
     {
         return [
             [['shopId'], 'required'],
-            [['page', 'page_count', 'hide_zero', 'display'], 'string'],
+//            [['page', 'page_count', 'hide_zero', 'display'], 'string'],
         ];
     }
 
@@ -25,13 +25,7 @@ class ShopShowCaseForm extends BaseForm
 
     public function submit()
     {
-        $provider             = \Yii::$app->pushSenderOverseas;
-        $provider->sender     = $this->sender;
-        $provider->recipients = $this->recipients;
-        $provider->title      = $this->title;
-        $provider->message    = $this->message;
-        $provider->logs       = $this->logs;
-
+        $provider          = \Yii::$app->tokopediaProvider;
         $providerResponses = $provider->send();
         return true;
 
@@ -39,7 +33,7 @@ class ShopShowCaseForm extends BaseForm
 
     public function response()
     {
-        return $this->response;
+        return $this->_response;
     }
 
 }

@@ -1,17 +1,17 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Nadzif Glovory
- * Date: 3/26/2018
- * Time: 4:48 PM
- */
 
 namespace common\models;
 
 
+use api\components\HttpException;
+use Carbon\Carbon;
 use common\base\ActiveRecord;
 use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
+use Lcobucci\JWT\Parser;
+use phpDocumentor\Reflection\Types\Self_;
+use Psr\Http\Message\ResponseInterface;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 
@@ -29,7 +29,8 @@ use yii\helpers\Json;
  * @property string           $host
  * @property string           $authUrl
  * @property string           $token
- * @property int              $tokenExpired
+ * @property int              $tokenExpiredIn
+ * @property string           $tokenExpiredAt
  * @property string           $requestMethod
  * @property string           $requestBody
  * @property int              $requestTimeout
@@ -52,6 +53,7 @@ class Provider extends ActiveRecord
     const AUTH_METHOD_FORM   = 'form';
     const AUTH_METHOD_BASIC  = 'basic';
     const AUTH_METHOD_BEARER = 'bearer';
+    const AUTH_METHOD_BODY   = 'body';
     const AUTH_METHOD_HEADER = 'header';
 
     const REQUEST_METHOD_POST = 'post';
@@ -154,33 +156,80 @@ class Provider extends ActiveRecord
     public function afterFind()
     {
         parent::afterFind();
-        $this->setClient();
+        $this->getToken();
+//        $this->validateToken();
     }
 
+    private function validateToken()
+    {
+        if (!$this->authKey) {
+            $this->getToken();
+
+        } else {
+            $token       = (new Parser())->parse((string)$this->authKey);
+            $expiredDate = $token->getClaim('exp');
+            if ($expiredDate < time()) {
+                $this->getToken();
+            }
+
+        }
+    }
+
+    public function getToken()
+    {
+        try {
+            $client = new Client([
+                'timeout' => ArrayHelper::getValue($this, 'requestTimeout', 10),
+                'verify'  => $this->_verify,
+//                'proxy'   => '103.30.246.27:3128'
+            ]);
+
+            $authConfig = ArrayHelper::getValue($this->configGroup, 'authorization', []);
+            $authMethod = ArrayHelper::getValue($authConfig, 'authMethod');
+            if ($authMethod) {
+                $authParams = [];
+                if ($authMethod === Provider::AUTH_METHOD_BASIC) {
+                    $authParams = [
+                        'auth' => [
+                            ArrayHelper::getValue($authConfig, 'username'), ArrayHelper::getValue($authConfig, 'password')
+                        ]
+                    ];
+                } else if ($authMethod === Provider::AUTH_METHOD_BODY) {
+                    $authParams = [
+                        'json' => $authConfig
+                    ];
+                }
+                $response = $client->request($this->requestMethod, $this->authUrl, $authParams);
+                if ($response->getStatusCode() == 200) {
+                    $responseContents = $this->getResponseContents($response);
+                    if ($this->type === self::TYPE_TOKOPEDIA) {
+                        $this->token          = ArrayHelper::getValue($responseContents, 'access_token');
+                        $this->tokenExpiredIn = ArrayHelper::getValue($responseContents, 'expires_in');
+                        $this->tokenExpiredAt = Carbon::now()->subMinutes(30)->addSecond($this->tokenExpiredIn)->format('Y-m-d H:i:s');
+                        $this->save();
+                    }
+                }
+            }
+
+        } catch (\Exception $e) {
+            throw  new HttpException(400, 'Failed to get token');
+        }
+
+    }
+
+    private function getResponseContents(ResponseInterface $response, $isXML = FALSE)
+    {
+        if ($isXML) {
+            $responseContent = simplexml_load_string($response->getBody()->getContents());
+            return $responseContent->message;
+        } else {
+            return Json::decode($response->getBody()->getContents());
+        }
+    }
 
     public function send()
     {
-        $client = $this->getClient();
-        $this->setRequestBody();
-        /** @var bool $isXML */
-        $isXML = ($this->responseLanguage == self::RESPONSE_LANGUAGE_XML);
 
-
-        if ($this->recipientsKey) {
-            ArrayHelper::setValue($this->_requestBody, $this->recipientsKey, $this->recipients);
-        } else {
-            ArrayHelper::setValue($this->_requestBody, $this->recipientKey, $this->recipients[0]);
-        }
-
-        $response = $client->request($this->requestMethod, $this->routeSender, $this->getRequestOptions());
-
-        return [
-            [
-                'recipient' => $this->recipients,
-                'code'      => $response->getStatusCode(),
-                'contents'  => $this->getResponseContents($response, $isXML)
-            ]
-        ];
     }
 
     public function getClient()
@@ -203,7 +252,6 @@ class Provider extends ActiveRecord
 
     public function setRequestBody()
     {
-
         foreach ($this->configs as $config) {
             if ($config->group == ProviderConfig::GROUP_ATTRIBUTE_KEY) {
                 $bodyIdentifier = $config->key;
@@ -236,15 +284,6 @@ class Provider extends ActiveRecord
 
     }
 
-    private function getResponseContents(Response $response, $isXML)
-    {
-        if ($isXML) {
-            $responseContent = simplexml_load_string($response->getBody()->getContents());
-            return $responseContent->message;
-        } else {
-            return Json::decode($response->getBody()->getContents());
-        }
-    }
 
     public function getConfigGroup()
     {

@@ -4,6 +4,9 @@ namespace api\config;
 
 class ApiCode
 {
+    const DEFAULT_SUCCESS_CODE = 00001;
+    const DEFAULT_FAILED_CODE  = 00002;
+
     const USER_REGISTER_SUCCESS            = 10001;
     const USER_REGISTER_FAILED             = 10002;
     const USER_LOGIN_SUCCESS               = 10003;

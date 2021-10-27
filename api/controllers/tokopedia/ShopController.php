@@ -1,14 +1,14 @@
 <?php
 
-namespace api\controllers;
-
+namespace api\controllers\tokopedia;
 
 use api\components\Controller;
 use api\components\FormAction;
+use api\config\ApiCode;
 use api\filters\ContentTypeFilter;
-use api\forms\NotificationForm;
+use api\forms\tokopedia\ShopShowCaseForm;
 
-class Shop extends Controller
+class ShopController extends Controller
 {
     public function behaviors()
     {
@@ -25,10 +25,9 @@ class Shop extends Controller
         return [
             'showcase' => [
                 'class'          => FormAction::className(),
-                'formClass'      => NotificationForm::className(),
-                'formConfig'     => ['mode' => NotificationForm::MODE_SMS],
-                'apiCodeSuccess' => 1,
-                'apiCodeFailed'  => 0,
+                'formClass'      => ShopShowCaseForm::className(),
+                'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
+                'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
             ],
         ];
     }
