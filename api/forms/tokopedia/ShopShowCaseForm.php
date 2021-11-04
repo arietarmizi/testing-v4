@@ -4,22 +4,21 @@ namespace api\forms\tokopedia;
 
 use api\components\BaseForm;
 use common\models\Provider;
+use GuzzleHttp\Exception\ClientException;
 
 class ShopShowCaseForm extends BaseForm
 {
-
-    public  $fsId = '15394';
+    public  $fsId    = '15394';
+    public  $shop_id = '11960781';
     private $_response;
 
     public function rules()
     {
-        return [
-        ];
+        return [];
     }
 
     public function validateShop($attribute, $params)
-    {
-    }
+    { }
 
     public function submit()
     {
@@ -27,7 +26,7 @@ class ShopShowCaseForm extends BaseForm
         $provider->_url           = 'v1/showcase/fs/' . $this->fsId . '/get';
         $provider->_requestMethod = Provider::REQUEST_METHOD_GET;
         $provider->_query         = [
-            'shop_id' => '11960781'
+            'shop_id' => $this->shop_id
         ];
         $this->_response          = $provider->send();
         return true;
@@ -37,5 +36,4 @@ class ShopShowCaseForm extends BaseForm
     {
         return $this->_response;
     }
-
 }
