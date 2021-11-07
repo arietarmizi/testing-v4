@@ -5,18 +5,12 @@ namespace common\encryption;
 use phpseclib3\Crypt\AES;
 use phpseclib3\Crypt\RSA;
 use phpseclib3\Crypt\Common\SymmetricKey;
+use yii\helpers\Json;
 
 class Tokopedia
 {
     const TAG_LENGTH   = 16;
     const NONCE_LENGTH = 12;
-
-    public static function decryptKey($encryptedKey)
-    {
-        $privateKey = file_get_contents(__DIR__ . '/signature/private.key');
-        $private    = RSA::loadPrivateKey($privateKey);
-        return $private->decrypt(base64_decode($encryptedKey));
-    }
 
     public static function decryptContent($secret, $content)
     {
@@ -34,6 +28,13 @@ class Tokopedia
         $aes->setKey($key);
         $aes->setNonce($nonce);
         $aes->setTag($tag);
-        return $aes->decrypt($cipherText);
+        return Json::decode($aes->decrypt($cipherText));
+    }
+
+    public static function decryptKey($encryptedKey)
+    {
+        $privateKey = file_get_contents(__DIR__ . '/signature/private.key');
+        $private    = RSA::loadPrivateKey($privateKey);
+        return $private->decrypt(base64_decode($encryptedKey));
     }
 }

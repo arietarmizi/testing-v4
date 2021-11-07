@@ -8,35 +8,26 @@ use GuzzleHttp\Exception\ClientException;
 
 class GetAllProductsForm extends BaseForm
 {
-    public  $fsId     = '15394';
-    public  $shop_id  = '11960781';
-    public  $page     = 1;
-    public  $per_page = 10;
+//    public  $fsId = '15394';
+    public  $fsId;
+    public  $page;
+    public  $perPage;
     private $_response;
 
     public function rules()
     {
-        return [];
+        return [
+            [['page', 'perPage', 'fsId'], 'required'],
+        ];
     }
 
     public function submit()
     {
-        $provider       = \Yii::$app->tokopediaProvider;
-        $provider->_url = 'v2/products/fs/' . $this->fsId . '/' . $this->page . '/' . $this->per_page . '';
-//        $provider->_url           = 'v2/products/fs/15394/2/10';
+        $provider                 = \Yii::$app->tokopediaProvider;
+        $provider->_url           = 'v2/products/fs/' . $this->fsId . '/' . $this->page . '/' . $this->perPage . '';
         $provider->_requestMethod = Provider::REQUEST_METHOD_GET;
-//        $provider->_query         = [
-//            'page'     => '2',
-//            'per_page' => '10',
-//        ];
-        try {
-            $this->_response = $provider->send();
-        } catch (ClientException $e) {
-            $this->_response = $e->getResponse();
-//            var_dump($this->_response);
-//            die();
-            return false;
-        }
+
+        $this->_response = $provider->send();
         return true;
     }
 

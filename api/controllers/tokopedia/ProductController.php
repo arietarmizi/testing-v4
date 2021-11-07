@@ -50,7 +50,7 @@ class ProductController extends Controller
     public function verbs()
     {
         return [
-            'get-all'        => ['get'],
+            'get-all'        => ['post'],
             'get-info-by-id' => ['get']
         ];
     }

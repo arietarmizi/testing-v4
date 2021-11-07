@@ -6,6 +6,7 @@ use api\components\HttpException;
 use Carbon\Carbon;
 use common\base\ActiveRecord;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use Psr\Http\Message\ResponseInterface;
@@ -70,16 +71,15 @@ class Provider extends ActiveRecord
 
     public $response;
     public $logs;
-
+    public $_requestMethod;
+    public $_query       = [];
+    public $_requestBody = [];
+    public $_url;
     /** @var Client */
     private $_client;
-    private $_headers     = [];
-    private $_options     = ['verify' => false];
-    private $_verify      = false;
-    public  $_requestMethod;
-    public  $_query       = [];
-    public  $_requestBody = [];
-    public  $_url;
+    private $_headers = [];
+    private $_options = ['verify' => false];
+    private $_verify  = false;
 
     public static function authMethods()
     {
@@ -219,18 +219,27 @@ class Provider extends ActiveRecord
 
     public function send()
     {
-        $this->setClient();
-        $this->setRequestBody();
-        $client   = $this->getClient();
-        $response = $client->request($this->_requestMethod, $this->host . $this->_url, $this->getRequestOptions());
-        return [
-            [
-                'code'     => $response->getStatusCode(),
-                'contents' => $this->getResponseContents($response)
-            ]
-        ];
+        try {
+            $this->setClient();
+            $this->setRequestBody();
+            $client   = $this->getClient();
+            $response = $client->request($this->_requestMethod, $this->host . $this->_url, $this->getRequestOptions());
+            return Json::decode($response->getBody()->getContents());
+        } catch (GuzzleException $e) {
+            throw new HttpException(400, \Yii::t('app', 'An error occurred'));
+        }
 
 
+    }
+
+    public function setRequestBody()
+    {
+        foreach ($this->configs as $config) {
+            if ($config->group == ProviderConfig::GROUP_ATTRIBUTE_KEY) {
+                $bodyIdentifier = $config->key;
+                $keys           = explode('.', $config->value);
+            }
+        }
     }
 
     public function getClient()
@@ -240,12 +249,12 @@ class Provider extends ActiveRecord
 
     public function setClient()
     {
-//        $logger = new \Monolog\Logger('GuzzleLog');
-//        $logger->pushHandler(new \Monolog\Handler\StreamHandler(\Yii::getAlias('@runtime') . '/logs/guzzle.log'), \Monolog\Logger   ::DEBUG);
-//        $stack = HandlerStack::create();
-//        $stack->push(Middleware::log(
-//            $logger, new \GuzzleHttp\MessageFormatter('{req_headers} - {req_body} {res_body}')
-//        ));
+        $logger = new \Monolog\Logger('GuzzleLog');
+        $logger->pushHandler(new \Monolog\Handler\StreamHandler(\Yii::getAlias('@runtime') . '/logs/guzzle.log'), \Monolog\Logger   ::DEBUG);
+        $stack = HandlerStack::create();
+        $stack->push(Middleware::log(
+            $logger, new \GuzzleHttp\MessageFormatter('{req_headers} - {req_body} {res_body}')
+        ));
 
         $this->addAuthorization();
         $this->addHeaders();
@@ -257,16 +266,6 @@ class Provider extends ActiveRecord
             'requestOptions' => $this->_options,
 //            'handler'        => $stack,
         ]);
-    }
-
-    public function setRequestBody()
-    {
-        foreach ($this->configs as $config) {
-            if ($config->group == ProviderConfig::GROUP_ATTRIBUTE_KEY) {
-                $bodyIdentifier = $config->key;
-                $keys           = explode('.', $config->value);
-            }
-        }
     }
 
     public function getRequestOptions()
