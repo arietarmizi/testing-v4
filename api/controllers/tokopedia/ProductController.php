@@ -8,17 +8,9 @@ use api\config\ApiCode;
 use api\filters\ContentTypeFilter;
 use api\forms\tokopedia\product\GetAllProductsForm;
 use api\forms\tokopedia\product\GetInfoById;
-use yii\filters\Cors;
 
 class ProductController extends Controller
 {
-    public static function allowedDomains()
-    {
-        return [
-            'http://127.0.0.1/e-commerce-enabler/api/web/tokopedia/product/get-all',
-        ];
-    }
-
     public function behaviors()
     {
         $behaviors                        = parent::behaviors();
@@ -30,20 +22,7 @@ class ProductController extends Controller
                 'get-info-by-id'
             ]
         ];
-
-//        return $behaviors;
-        return array_merge(parent::behaviors(), [
-            'corsFilter' => [
-                'class' => Cors::className(),
-                'cors'  => [
-                    // restrict access to domains:
-                    'Access-Control-Allow-Origin'      => ["*"],
-                    'Access-Control-Request-Method'    => ['POST', 'GET'],
-                    'Access-Control-Allow-Credentials' => true,
-                    'Access-Control-Max-Age'           => 3600,
-                ],
-            ],
-        ]);
+        return $behaviors;
     }
 
     public function Actions()

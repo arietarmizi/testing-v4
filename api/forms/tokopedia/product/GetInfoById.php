@@ -8,7 +8,7 @@ use api\components\BaseForm;
 use common\models\Provider;
 use GuzzleHttp\Exception\ClientException;
 
-class GetInfoById extends BaseForm
+class   GetInfoById extends BaseForm
 {
     private $_response;
     public $fsId     = '15394';

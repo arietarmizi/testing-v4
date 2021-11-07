@@ -4,7 +4,6 @@ namespace api\forms\tokopedia;
 
 use api\components\BaseForm;
 use common\models\Provider;
-use GuzzleHttp\Exception\ClientException;
 
 class ShopShowCaseForm extends BaseForm
 {
@@ -16,9 +15,6 @@ class ShopShowCaseForm extends BaseForm
     {
         return [];
     }
-
-    public function validateShop($attribute, $params)
-    { }
 
     public function submit()
     {
