@@ -7,7 +7,9 @@ use api\components\FormAction;
 use api\config\ApiCode;
 use api\filters\ContentTypeFilter;
 use api\forms\tokopedia\product\GetAllProductsForm;
-use api\forms\tokopedia\product\GetInfoById;
+use api\forms\tokopedia\product\GetInfoByIdForm;
+use api\forms\tokopedia\product\GetInfoBySkuForm;
+use api\forms\tokopedia\product\GetProductVariantForm;
 
 class ProductController extends Controller
 {
@@ -19,7 +21,9 @@ class ProductController extends Controller
             'contentType' => ContentTypeFilter::TYPE_APPLICATION_JSON,
             'only'        => [
                 'get-all',
-                'get-info-by-id'
+                'product-info-by-id',
+                'product-info-by-sku',
+                'get-variant'
             ]
         ];
         return $behaviors;
@@ -28,7 +32,7 @@ class ProductController extends Controller
     public function Actions()
     {
         return [
-            'get-all'        => [
+            'get-all'             => [
                 'class'          => FormAction::className(),
                 'formClass'      => GetAllProductsForm::className(),
                 'messageSuccess' => \Yii::t('app', 'Get All Products Success.'),
@@ -36,11 +40,27 @@ class ProductController extends Controller
                 'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
                 'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
             ],
-            'get-info-by-id' => [
+            'product-info-by-id'  => [
                 'class'          => FormAction::className(),
-                'formClass'      => GetInfoById::className(),
+                'formClass'      => GetInfoByIdForm::className(),
                 'messageSuccess' => \Yii::t('app', 'Get Info Products By ID Success.'),
                 'messageFailed'  => \Yii::t('app', 'Get Info Products By ID Failed.'),
+                'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
+                'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
+            ],
+            'product-info-by-sku' => [
+                'class'          => FormAction::className(),
+                'formClass'      => GetInfoBySkuForm::className(),
+                'messageSuccess' => \Yii::t('app', 'Get Info Products By SKU Success.'),
+                'messageFailed'  => \Yii::t('app', 'Get Info Products By SKU Failed.'),
+                'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
+                'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
+            ],
+            'get-variant'         => [
+                'class'          => FormAction::className(),
+                'formClass'      => GetProductVariantForm::className(),
+                'messageSuccess' => \Yii::t('app', 'Get Product Variant By Category ID Success.'),
+                'messageFailed'  => \Yii::t('app', 'Get Product Variant By Category ID Failed.'),
                 'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
                 'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
             ]
@@ -50,8 +70,10 @@ class ProductController extends Controller
     public function verbs()
     {
         return [
-            'get-all'        => ['post'],
-            'get-info-by-id' => ['get']
+            'get-all'             => ['post'],
+            'product-info-by-id'  => ['post'],
+            'product-info-by-sku' => ['post'],
+            'get-variant'         => ['post']
         ];
     }
 }
