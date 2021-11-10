@@ -6,8 +6,7 @@ $uuidPattern = trim(Uuid::VALID_PATTERN, '^$');
 
 return [
     ''                                 => 'site/index',
-    'rsa'                              => 'site/rsa',
-    'encoded'                          => 'site/encoded',
+    'dummy'                            => 'dummy',
     'tokopedia/shop/showcase'          => 'tokopedia/shop/showcase',
 
 //    TOKOPEDIA PRODUCTS
