@@ -9,8 +9,9 @@ return [
     'rsa'                                   => 'site/rsa',
     'encoded'                               => 'site/encoded',
     'tokopedia/shop/showcase'               => 'tokopedia/shop/showcase',
+
+//    Dummy
     'dummy'                                 => 'dummy',
-    'tokopedia/shop/showcase'               => 'tokopedia/shop/showcase',
 
 //    TOKOPEDIA PRODUCTS
     'tokopedia/product/get-all'             => 'tokopedia/product/get-all',
