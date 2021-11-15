@@ -20,4 +20,7 @@ return [
     'tokopedia/product/get-variant'         => 'tokopedia/product/get-variant',
 
     'tokopedia/order/get-single-order' => 'tokopedia/order/get-single-order',
+
+//    AUTH USER
+    'auth/register' => 'auth/register',
 ];
