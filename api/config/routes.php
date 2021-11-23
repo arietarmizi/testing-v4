@@ -18,9 +18,13 @@ return [
     'tokopedia/product/product-info-by-id'  => 'tokopedia/product/product-info-by-id',
     'tokopedia/product/product-info-by-sku' => 'tokopedia/product/product-info-by-sku',
     'tokopedia/product/get-variant'         => 'tokopedia/product/get-variant',
+    'tokopedia/product/list'                => 'tokopedia/product/list',
 
     'tokopedia/order/get-single-order' => 'tokopedia/order/get-single-order',
 
+//    Category
+    'tokopedia/category/scrap'                   => 'tokopedia/category/scrap',
+
 //    AUTH USER
-    'auth/register' => 'auth/register',
+    'auth/register'                    => 'auth/register',
 ];

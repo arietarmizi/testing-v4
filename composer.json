@@ -66,6 +66,10 @@
     {
       "type": "vcs",
       "url": "https://github.com/nadzif/yii2-file-core"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/nadzif/yii2-base-component"
     }
   ]
 }

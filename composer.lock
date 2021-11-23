@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5bfd28bfb14c7c6b67dafa489793b339",
+    "content-hash": "eaf55859682c708eaf8b3dc134252fe1",
     "packages": [
         {
             "name": "akupeduli/yii2-bracket-plus",
@@ -123,7 +123,7 @@
             "version": "v4.4.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/makeusabrew/bootbox.git",
+                "url": "git@github.com:makeusabrew/bootbox.git",
                 "reference": "cb756203e250ed0ff2539359ff0ad1c3ffb8e8d3"
             },
             "dist": {
@@ -183,7 +183,7 @@
             "version": "3.3.11",
             "source": {
                 "type": "git",
-                "url": "git@github.com:RobinHerbots/Inputmask.git",
+                "url": "https://github.com/RobinHerbots/Inputmask.git",
                 "reference": "5e670ad62f50c738388d4dcec78d2888505ad77b"
             },
             "dist": {

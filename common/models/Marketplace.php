@@ -23,6 +23,19 @@ class Marketplace extends ActiveRecord
     const STATUS_ACTIVE   = 'active';
     const STATUS_INACTIVE = 'inactive';
 
+    const TOKOPEDIA = 'tokopedia';
+    const BUKALAPAK = 'bukalapak';
+    const SHOPEE    = 'shopee';
+
+    public static function marketplaces()
+    {
+        return [
+            self::TOKOPEDIA => \Yii::t('app', 'Tokopedia'),
+            self::BUKALAPAK => \Yii::t('app', 'Bukalapak'),
+            self::SHOPEE    => \Yii::t('app', 'Shopee'),
+        ];
+    }
+
     public static function statuses()
     {
         return [

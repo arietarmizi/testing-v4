@@ -11,7 +11,9 @@ use common\base\ActiveRecord;
  * @package common\models
  *
  * @property string $id
- * @property string $shopId
+ * @property string $marketplaceId
+ * @property string $productId
+ * @property string $fsId
  * @property string $productCategoryId
  * @property string $sku
  * @property string $code
@@ -19,6 +21,7 @@ use common\base\ActiveRecord;
  * @property string $condition
  * @property string $minOrder
  * @property string $defaultPrice
+ * @property string $stock
  * @property string $productDescription
  * @property string $description
  * @property string $status
@@ -27,8 +30,8 @@ use common\base\ActiveRecord;
  */
 class Product extends ActiveRecord
 {
-    const STATUS_ACTIVE       = 'active';
-    const STATUS_INACTIVE     = 'inactive';
+    const STATUS_ACTIVE       = 'Active';
+    const STATUS_INACTIVE     = 'Inactive';
     const STATUS_OUT_OF_STOCK = 'out of stock';
 
     const CONDITION_NEW    = 'new';
@@ -59,6 +62,13 @@ class Product extends ActiveRecord
     public function getCategory()
     {
         return $this->hasMany(Product::class, ['categoryId' => 'id']);
+    }
+
+    public function behaviors()
+    {
+        $behaviors = parent::behaviors();
+        unset($behaviors['uuid']);
+        return $behaviors;
     }
 
 }

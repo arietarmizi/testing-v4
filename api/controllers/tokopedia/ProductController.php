@@ -2,6 +2,7 @@
 
 namespace api\controllers\tokopedia;
 
+use api\actions\ListAction;
 use api\components\Controller;
 use api\components\FormAction;
 use api\config\ApiCode;
@@ -11,6 +12,9 @@ use api\forms\tokopedia\product\GetAllProductsForm;
 use api\forms\tokopedia\product\GetInfoByIdForm;
 use api\forms\tokopedia\product\GetInfoBySkuForm;
 use api\forms\tokopedia\product\GetProductVariantForm;
+use common\models\Category;
+use common\models\Marketplace;
+use common\models\Product;
 
 class ProductController extends Controller
 {
@@ -72,7 +76,28 @@ class ProductController extends Controller
                 'messageFailed'  => \Yii::t('app', 'Create Product Failed.'),
                 'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
                 'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
-            ]
+            ],
+            'list'                => [
+                'class'             => ListAction::class,
+                'query'             => function () {
+                    return Product::find()
+//                        ->where([Product::tableName() . '.status' => Product::STATUS_ACTIVE])
+//                        ->where([Product::tableName() . '.categoryId' => Category::tableName() . '.id'])
+//                        ->joinWith(['category'])
+                        ->addOrderBy([Product::tableName() . '.name' => SORT_ASC]);
+                },
+                'toArrayProperties' => [
+                    Product::class => [
+                        'productCategoryId',
+                        'name',
+                        'description',
+                        'status'
+                    ]
+                ],
+                'apiCodeSuccess'    => 0,
+                'apiCodeFailed'     => 400,
+                'successMessage'    => \Yii::t('app', 'Get product list success'),
+            ],
         ];
     }
 

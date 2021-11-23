@@ -20,6 +20,7 @@ class m211114_203412_create_subscription_type_table extends Migration
             'maxOutlet'         => $this->double(53)->notNull(),
             'duration'          => $this->double(53)->notNull(),
             'durationType'      => $this->string(100)->notNull()->defaultValue(SubscriptionType::DURATION_DAY),
+            'expiredAt'         => $this->date(),
             'description'       => $this->text(),
             'status'            => $this->string(50)->defaultValue(SubscriptionType::STATUS_ACTIVE),
             'createdAt'         => $this->dateTime(),

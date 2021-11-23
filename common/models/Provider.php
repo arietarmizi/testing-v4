@@ -224,12 +224,11 @@ class Provider extends ActiveRecord
             $this->setRequestBody();
             $client   = $this->getClient();
             $response = $client->request($this->_requestMethod, $this->host . $this->_url, $this->getRequestOptions());
-            return Json::decode($response->getBody()->getContents());
+//            return Json::decode($response->getBody()->getContents());
+            return Json::decode((string)$response->getBody());
         } catch (GuzzleException $e) {
             throw new HttpException(400, \Yii::t('app', 'An error occurred'));
         }
-
-
     }
 
     public function setRequestBody()

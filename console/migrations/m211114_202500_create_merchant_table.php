@@ -14,18 +14,16 @@ class m211114_202500_create_merchant_table extends Migration
     public function safeUp()
     {
         $this->createTable(Merchant::tableName(), [
-            'id'                 => $this->string(36)->notNull(),
-            'userId'             => $this->string(36)->notNull(),
-            'subscriptionTypeId' => $this->string(36)->notNull(),
-            'code'               => $this->string(50),
-            'name'               => $this->string(255)->notNull(),
-            'description'        => $this->text(),
-            'status'             => $this->string(50)->defaultValue(Merchant::STATUS_ACTIVE),
-            'registerStatus'     => $this->string(100)->defaultValue(Merchant::REGISTER_NEW),
-            'registerAt'         => $this->date(),
-            'expiredAt'          => $this->date(),
-            'createdAt'          => $this->dateTime(),
-            'updatedAt'          => $this->dateTime(),
+            'id'             => $this->string(36)->notNull(),
+            'userId'         => $this->string(36)->notNull(),
+            'code'           => $this->string(50),
+            'name'           => $this->string(255)->notNull(),
+            'description'    => $this->text(),
+            'registerStatus' => $this->string(100)->defaultValue(Merchant::REGISTER_NEW),
+            'registeredAt'   => $this->date(),
+            'status'         => $this->string(50)->defaultValue(Merchant::STATUS_ACTIVE),
+            'createdAt'      => $this->dateTime(),
+            'updatedAt'      => $this->dateTime(),
         ], $this->tableOptions);
 
         $this->addPrimaryKey('merchantId', Merchant::tableName(), ['id']);

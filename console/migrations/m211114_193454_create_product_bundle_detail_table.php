@@ -15,7 +15,7 @@ class m211114_193454_create_product_bundle_detail_table extends Migration
     {
         $this->createTable(ProductBundleDetail::tableName(), [
             'id'               => $this->string(36)->notNull(),
-            'sku'              => $this->string(50),
+            'productBundleId'  => $this->string(36),
             'productVariantId' => $this->string(36),
             'defaultPrice'     => $this->double(53),
             'quantity'         => $this->double(53),

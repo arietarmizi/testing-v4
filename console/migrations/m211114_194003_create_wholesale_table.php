@@ -19,7 +19,6 @@ class m211114_194003_create_wholesale_table extends Migration
             'minQuantity'      => $this->double(53),
             'maxQuantity'      => $this->double(53),
             'defaultPrice'     => $this->double(53),
-            'currencyId'       => $this->string(36),
             'status'           => $this->string(50)->defaultValue(Wholesale::STATUS_ACTIVE),
             'createdAt'        => $this->dateTime(),
             'updatedAt'        => $this->dateTime(),

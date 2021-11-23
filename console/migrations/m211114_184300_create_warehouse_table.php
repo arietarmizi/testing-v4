@@ -14,14 +14,28 @@ class m211114_184300_create_warehouse_table extends Migration
     public function safeUp()
     {
         $this->createTable(Warehouse::tableName(), [
-            'id'         => $this->string(36)->notNull(),
-            'districtId' => $this->string(36),
-            'name'       => $this->string(255)->notNull(),
-            'address'    => $this->string(255),
-            'type'       => $this->string(50)->defaultValue(Warehouse::STORE),
-            'status'     => $this->string(50)->defaultValue(Warehouse::STATUS_ACTIVE),
-            'createdAt'  => $this->dateTime(),
-            'updatedAt'  => $this->dateTime(),
+            'id'                      => $this->string(36)->notNull(),
+            'shopId'                  => $this->string(36),
+            'name'                    => $this->string(255)->notNull(),
+            'description'             => $this->text(),
+            'districtId'              => $this->string(36),
+            'address'                 => $this->text(),
+            'email'                   => $this->string(100)->unique()->notNull(),
+            'phoneNumber'             => $this->double(50)->notNull(),
+            'whType'                  => $this->string(100),
+            'cityId'                  => $this->string(36),
+            'cityName'                => $this->string(255),
+            'provinceId'              => $this->string(36),
+            'provinceName'            => $this->string(255),
+            'postalCode'              => $this->double(53),
+            'isDefault'               => $this->boolean()->defaultValue(0),
+            'latLon'                  => $this->text(),
+            'latitude'                => $this->string(255),
+            'longitude'               => $this->string(255),
+            'branchStoreSubscription' => $this->boolean()->defaultValue(0),
+            'status'                  => $this->string(50)->defaultValue(Warehouse::STATUS_ACTIVE),
+            'createdAt'               => $this->dateTime(),
+            'updatedAt'               => $this->dateTime(),
         ], $this->tableOptions);
 
         $this->addPrimaryKey('warehouseId', Warehouse::tableName(), ['id']);
