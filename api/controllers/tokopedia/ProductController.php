@@ -28,7 +28,8 @@ class ProductController extends Controller
                 'get-all',
                 'product-info-by-id',
                 'product-info-by-sku',
-                'get-variant'
+                'get-variant',
+                'create'
             ]
         ];
         return $behaviors;

@@ -12,7 +12,8 @@ use common\base\ActiveRecord;
  *
  * @property $id
  * @property $code
- * @property $name
+ * @property $merchantId
+ * @property $marketplaceName
  * @property $description
  * @property $status
  * @property $createdAt

@@ -13,7 +13,7 @@ use common\base\ActiveRecord;
  * @property string $id
  * @property string $marketplaceId
  * @property string $productId
- * @property string $fsId
+ * @property string $shopId
  * @property string $productCategoryId
  * @property string $sku
  * @property string $code

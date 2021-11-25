@@ -3,8 +3,8 @@
 namespace api\forms\category;
 
 use api\components\BaseForm;
-use common\models\Category;
 use common\models\Product;
+use common\models\ProductCategory;
 use common\models\ProductCategoryDetail;
 use common\models\Provider;
 use yii\helpers\ArrayHelper;
@@ -41,7 +41,7 @@ class ScrapFrom extends BaseForm
 //                ->where(['id' => (string)$remoteCategory['id']])
 //                ->one();
 //            if (!$category) {
-            $category = new Category();
+            $category = new ProductCategory();
 //            }
             $category->id   = $remoteCategory['id'];
             $category->name = $remoteCategory['name'];
@@ -60,7 +60,8 @@ class ScrapFrom extends BaseForm
 //                if (!$remoteCategoryChild) {
                 $categoryDetail = new ProductCategoryDetail();
 //                }
-                $categoryDetail->productCategoryId = $remoteCategoryChild['id'];
+                $categoryDetail->productCategoryId = $remoteCategory['id'];
+                $categoryDetail->id                = $remoteCategoryChild['id'];
                 $categoryDetail->name              = $remoteCategoryChild['name'];
                 $categoryDetail->save(false);
             }

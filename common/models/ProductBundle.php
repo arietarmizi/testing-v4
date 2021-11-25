@@ -12,6 +12,7 @@ use common\base\ActiveRecord;
  *
  * @property $id
  * @property $name
+ * @property $price
  * @property $description
  * @property $status
  * @property $createdAt

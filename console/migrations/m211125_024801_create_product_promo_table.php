@@ -1,29 +1,30 @@
 <?php
 
 use console\base\Migration;
-use common\models\Wholesale;
+use common\models\ProductPromo;
 
 /**
- * Handles the creation of table `{{%wholesale}}`.
+ * Handles the creation of table `{{%product_promo}}`.
  */
-class m211114_194003_create_wholesale_table extends Migration
+class m211125_024801_create_product_promo_table extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        $this->createTable(Wholesale::tableName(), [
+        $this->createTable(ProductPromo::tableName(), [
             'id'               => $this->string(36)->notNull(),
-            'productVariantId' => $this->string(36),
+            'productVariantId' => $this->string(36)->notNull(),
             'minQuantity'      => $this->double(53),
             'maxQuantity'      => $this->double(53),
             'defaultPrice'     => $this->double(53),
-            'status'           => $this->string(50)->defaultValue(Wholesale::STATUS_ACTIVE),
+            'status'           => $this->string(50)->defaultValue(ProductPromo::STATUS_ACTIVE),
             'createdAt'        => $this->dateTime(),
             'updatedAt'        => $this->dateTime(),
         ], $this->tableOptions);
-        $this->addPrimaryKey('wholesaleId', Wholesale::tableName(), ['id']);
+
+        $this->addPrimaryKey('productPromoId', ProductPromo::tableName(), ['id']);
     }
 
     /**
@@ -31,6 +32,6 @@ class m211114_194003_create_wholesale_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropTable(Wholesale::tableName());
+        $this->dropTable(ProductPromo::tableName());
     }
 }

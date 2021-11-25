@@ -33,4 +33,11 @@ class ProductCategory extends ActiveRecord
     {
         return '{{%product_category}}';
     }
+
+    public function behaviors()
+    {
+        $behaviors = parent::behaviors();
+        unset($behaviors['uuid']);
+        return $behaviors;
+    }
 }

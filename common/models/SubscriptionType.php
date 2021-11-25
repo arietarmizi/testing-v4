@@ -11,12 +11,11 @@ use common\base\ActiveRecord;
  * @package common\models
  *
  * @property string  $id
- * @property string  $merchantId
- * @property boolean $isSupportMultiple
- * @property double  $maxOutlet
- * @property double  $duration
+ * @property string  $price
+ * @property integer $duration
  * @property string  $durationType
  * @property string  $description
+ * @property string  $transactionQuota
  * @property string  $status
  * @property string  $createdAt
  * @property string  $updatedAt

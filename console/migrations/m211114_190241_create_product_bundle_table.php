@@ -16,6 +16,7 @@ class m211114_190241_create_product_bundle_table extends Migration
         $this->createTable(ProductBundle::tableName(), [
             'id'          => $this->string(36)->notNull(),
             'name'        => $this->string(255)->notNull(),
+            'price'       => $this->double(53)->notNull(),
             'description' => $this->text(),
             'status'      => $this->string(50)->defaultValue(ProductBundle::STATUS_ACTIVE),
             'createdAt'   => $this->dateTime(),
