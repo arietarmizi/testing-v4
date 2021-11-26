@@ -17,7 +17,6 @@ use yii\web\IdentityInterface;
  *
  * @property string                $id
  * @property string                $fileId
- * @property string                $merchantId
  * @property string                $identityCardNumber
  * @property string                $name
  * @property string                $phoneNumber

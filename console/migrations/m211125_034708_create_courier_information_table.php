@@ -16,6 +16,7 @@ class m211125_034708_create_courier_information_table extends Migration
         $this->createTable(CourierInformation::tableName(), [
             'courierId'   => $this->string(36)->notNull(),
             'courierName' => $this->string(255),
+            'phoneNumber' => $this->double(53),
         ], $this->tableOptions);
         $this->addPrimaryKey('courierId', CourierInformation::tableName(), ['courierId']);
     }

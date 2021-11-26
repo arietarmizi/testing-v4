@@ -14,9 +14,8 @@ class m211125_030119_create_order_table extends Migration
     public function safeUp()
     {
         $this->createTable(Order::tableName(), [
-            'orderId'     => $this->string(36)->notNull(),
+            'id'          => $this->string(36)->notNull(),
             'orderDate'   => $this->dateTime(),
-            'shopId'      => $this->string(100),
             'revInv'      => $this->string(100),
             'customerId'  => $this->string(36),
             'courierId'   => $this->string(36),
@@ -25,7 +24,7 @@ class m211125_030119_create_order_table extends Migration
             'discountId'  => $this->string(36),
             'orderStatus' => $this->string(50),
         ], $this->tableOptions);
-        $this->addPrimaryKey('orderId', Order::tableName(), ['orderId']);
+        $this->addPrimaryKey('orderId', Order::tableName(), ['id']);
     }
 
     /**
