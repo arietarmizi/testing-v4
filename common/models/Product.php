@@ -10,23 +10,24 @@ use common\base\ActiveRecord;
  * Class Product
  * @package common\models
  *
- * @property string $id
- * @property string $marketplaceId
- * @property string $productId
- * @property string $shopId
- * @property string $productCategoryId
- * @property string $sku
- * @property string $code
- * @property string $name
- * @property string $condition
- * @property string $minOrder
- * @property string $defaultPrice
- * @property string $stock
- * @property string $productDescription
- * @property string $description
- * @property string $status
- * @property string $createdAt
- * @property string $updatedAt
+ * @property string  $id
+ * @property string  $marketplaceId
+ * @property string  $productId
+ * @property string  $shopId
+ * @property string  $productSubCategoryId
+ * @property string  $sku
+ * @property string  $code
+ * @property string  $name
+ * @property string  $condition
+ * @property string  $minOrder
+ * @property string  $defaultPrice
+ * @property string  $stock
+ * @property string  $productDescription
+ * @property string  $description
+ * @property boolean $isMaster
+ * @property string  $status
+ * @property string  $createdAt
+ * @property string  $updatedAt
  */
 class Product extends ActiveRecord
 {

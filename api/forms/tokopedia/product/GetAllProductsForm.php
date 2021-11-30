@@ -57,12 +57,12 @@ class GetAllProductsForm extends BaseForm
             if (!$product) {
                 $product = new Product();
             }
-            $product->id                = $remoteProduct['product_id'];
-            $product->name              = $remoteProduct['name'];
-            $product->productCategoryId = $remoteProduct['category_id'];
-            $product->description       = $remoteProduct['desc'];
-            $product->status            = $remoteProduct['status'];
-            $product->fsId              = $this->fsId;
+            $product->id                   = $remoteProduct['product_id'];
+            $product->name                 = $remoteProduct['name'];
+            $product->productSubCategoryId = $remoteProduct['category_id'];
+            $product->description          = $remoteProduct['desc'];
+            $product->status               = $remoteProduct['status'];
+//            $product->fsId              = $this->fsId;
             $product->save(false);
         }
         return true;

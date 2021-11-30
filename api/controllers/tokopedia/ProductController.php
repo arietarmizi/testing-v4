@@ -89,7 +89,7 @@ class ProductController extends Controller
                 },
                 'toArrayProperties' => [
                     Product::class => [
-                        'productCategoryId',
+                        'productSubCategoryId',
                         'name',
                         'description',
                         'status'
