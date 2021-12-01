@@ -8,9 +8,9 @@ use api\components\Controller;
 use api\components\FormAction;
 use api\config\ApiCode;
 use api\filters\ContentTypeFilter;
-use api\forms\subscription\StoreSubscriptionForm;
+use api\forms\marketplace\StoreMarketplaceForm;
 
-class SubscriptionController extends Controller
+class MarketplaceController extends Controller
 {
     public function behaviors()
     {
@@ -21,6 +21,9 @@ class SubscriptionController extends Controller
             'contentType' => ContentTypeFilter::TYPE_APPLICATION_JSON,
             'only'        => [
                 'store',
+                'update',
+                'list',
+                'delete',
             ]
         ];
         return $behaviors;
@@ -29,9 +32,9 @@ class SubscriptionController extends Controller
     public function actions()
     {
         return [
-            'store'  => [
+            'store' => [
                 'class'          => FormAction::class,
-                'formClass'      => StoreSubscriptionForm::class,
+                'formClass'      => StoreMarketplaceForm::class,
                 'messageSuccess' => \Yii::t('app', 'Store Subscription Success.'),
                 'messageFailed'  => \Yii::t('app', 'Store Subscription Failed.'),
                 'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
@@ -43,7 +46,8 @@ class SubscriptionController extends Controller
     public function verbs()
     {
         return [
-            'store' => ['post'],
+            'store' => ['post']
         ];
     }
+
 }

@@ -3,6 +3,7 @@
 namespace api\forms\auth;
 
 use api\components\BaseForm;
+use Carbon\Carbon;
 use common\models\User;
 use common\validators\PhoneNumberValidator;
 
@@ -64,8 +65,8 @@ class RegisterForm extends BaseForm
         $user->type               = $this->type ? $this->type : User::types();
         $user->birthDate          = $this->birthDate;
         $user->address            = $this->address;
-        $user->verified           = false;
-//        $user->verifiedAt
+        $user->verified           = true;
+        $user->verifiedAt         = Carbon::now()->format('Y-m-d');
         $user->setPassword($this->password);
         if ($user->save()) {
             $user->refresh();

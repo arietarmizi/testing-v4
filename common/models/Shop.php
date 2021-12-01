@@ -14,6 +14,7 @@ use common\base\ActiveRecord;
  * @property $fsId
  * @property $userId
  * @property $shopName
+ * @property $isOpen
  * @property $description
  * @property $status
  * @property $createdAt
@@ -35,5 +36,19 @@ class Shop extends ActiveRecord
     public static function tableName()
     {
         return '{{%shop}}';
+    }
+
+    public function getMarketplace()
+    {
+        return $this->hasOne(Shop::class, ['id' => 'marketplaceId']);
+    }
+
+    public function behaviors()
+    {
+        $behaviors = parent::behaviors();
+
+        unset($behaviors['uuid']);
+
+        return $behaviors;
     }
 }

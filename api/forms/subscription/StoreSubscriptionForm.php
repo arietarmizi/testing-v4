@@ -11,11 +11,9 @@ class StoreSubscriptionForm extends BaseForm
 {
     public $userId;
     public $subscriptionTypeId;
-    public $registerAt;
-    public $expiredAt;
-    public $usedQuota;
-    public $remainingQuota;
     public $status;
+
+    private $_subscriptionType;
 
     public function init()
     {
@@ -25,28 +23,37 @@ class StoreSubscriptionForm extends BaseForm
     public function rules()
     {
         return [
-//            [['subscriptionTypeId'], 'required'],
-//            [['subscriptionTypeId', 'userId'], 'string'],
-//            [['usedQuota', 'remainingQuota'], 'double'],
-//            [['registerAt', 'expiredAt'], 'date'],
+            [['subscriptionTypeId'], 'required'],
+            [['subscriptionTypeId', 'userId'], 'string'],
+            [['usedQuota', 'remainingQuota'], 'double'],
+            [['registerAt', 'expiredAt'], 'date'],
         ];
     }
 
     public function submit()
     {
-//        $transaction = \Yii::$app->db->beginTransaction();
-//
-//        $subscription                     = new Subscription();
-//        $subscription->subscriptionTypeId = $this->subscriptionTypeId;
-//        $subscription->userId             = $this->userId;
-//        $subscription->registerAt         = $this->registerAt;
-//        $subscription->expiredAt          = $this->expiredAt;
-        var_dump(\Yii::$app->user->id);
-        die();
+        $user = \Yii::$app->user->identity;
+
+        $subscription                     = new Subscription();
+        $subscription->userId             = $user->id;
+        $subscription->subscriptionTypeId = $this->subscriptionTypeId;
+        $subscription->countSubscription();
+        $subscription->usedQuota = 0;
+
+        $subscription->save();
+        $subscription->refresh();
+
+        $this->_subscriptionType = $subscription;
+        return true;
     }
 
     public function response()
     {
+        $query = $this->_subscriptionType->toArray();
 
+        unset($query['createdAt']);
+        unset($query['updatedAt']);
+
+        return ['subscriptionType' => $query];
     }
 }

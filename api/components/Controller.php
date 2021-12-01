@@ -46,15 +46,15 @@ class Controller extends \yii\web\Controller
                 'class'   => VerbFilter::class,
                 'actions' => $this->verbs(),
             ],
-//            'systemAppFilter'        => [
-//                'class'              => SystemAppFilter::class,
-//                'appKeyHeaderKey'    => 'X-App-key',
-//                'appSecretHeaderKey' => 'X-App-secret'
-//            ],
-//            'authenticator'     => [
-//                'class'       => CompositeAuth::className(),
-//                'authMethods' => [HttpBearerAuth::className()]
-//            ],
+            'systemAppFilter'        => [
+                'class'              => SystemAppFilter::class,
+                'appKeyHeaderKey'    => 'X-App-key',
+                'appSecretHeaderKey' => 'X-App-secret'
+            ],
+            'authenticator'     => [
+                'class'       => CompositeAuth::className(),
+                'authMethods' => [HttpBearerAuth::className()]
+            ],
             'firstRequestTimeFilter' => [
                 'class' => FirstRequestTimeFilter::class
             ]

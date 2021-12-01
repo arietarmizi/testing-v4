@@ -4,6 +4,7 @@
 namespace common\models;
 
 
+use Carbon\Carbon;
 use common\base\ActiveRecord;
 
 /**
@@ -36,5 +37,35 @@ class Subscription extends ActiveRecord
     public static function tableName()
     {
         return '{{%subscription}}';
+    }
+
+    public function getSubscriptionType()
+    {
+        return $this->hasOne(Subscription::class, ['id' => 'subscriptionTypeId']);
+    }
+
+    public function countSubscription()
+    {
+        $query = SubscriptionType::find()
+            ->where(['id' => $this->subscriptionTypeId])
+            ->one();
+
+        if ($query->durationType == SubscriptionType::DURATION_YEAR) {
+            $this->registerAt     = Carbon::now();
+            $this->expiredAt      = Carbon::now()->addYear($query->duration);
+            $this->remainingQuota = $query->transactionQuota;
+        } else if ($query->durationType == SubscriptionType::DURATION_MONTH) {
+            $this->registerAt     = Carbon::now();
+            $this->expiredAt      = Carbon::now()->addMonth($query->duration);
+            $this->remainingQuota = $query->transactionQuota;
+        } else if ($query->durationType == SubscriptionType::DURATION_WEEK) {
+            $this->registerAt     = Carbon::now();
+            $this->expiredAt      = Carbon::now()->addWeek($query->duration);
+            $this->remainingQuota = $query->transactionQuota;
+        } else if ($query->durationType == SubscriptionType::DURATION_DAY) {
+            $this->registerAt     = Carbon::now();
+            $this->expiredAt      = Carbon::now()->addDay($query->duration);
+            $this->remainingQuota = $query->transactionQuota;
+        }
     }
 }

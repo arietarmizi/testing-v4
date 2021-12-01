@@ -40,5 +40,9 @@ return [
 
     'subscription/store' => 'subscription/store',
 
+    'marketplace/store' => 'marketplace/store',
+
+    'shop/store' => 'shop/store',
+
 
 ];

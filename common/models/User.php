@@ -8,6 +8,7 @@ use common\base\ActiveRecord;
 use Ramsey\Uuid\Uuid;
 use yii\base\NotSupportedException;
 use yii\filters\RateLimitInterface;
+use yii\web\IdentityInterface;
 
 
 /**
@@ -40,7 +41,7 @@ use yii\filters\RateLimitInterface;
  *
  * @property NotSupportedException $authKey
  */
-class User extends ActiveRecord implements RateLimitInterface
+class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
 {
     const TYPE_OWNER    = 'owner';
     const TYPE_EMPLOYEE = 'employee';
@@ -81,6 +82,24 @@ class User extends ActiveRecord implements RateLimitInterface
     public static function tableName()
     {
         return '{{%user}}';
+    }
+
+    //////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////
+    // Local Variable Area ///////////////////////////////////////
+    //////////////////////////////////////////////////////////////
+    // $$ local password
+
+    /**
+     * @param int|string $id
+     *
+     * @return User|\yii\db\ActiveRecord|IdentityInterface
+     */
+    public static function findIdentity($id)
+    {
+        return static::find()
+            ->where(['id' => $id, 'verified' => 1])
+            ->one();
     }
 
     public static function findIdentityByAccessToken($token, $type = null)
@@ -238,12 +257,5 @@ class User extends ActiveRecord implements RateLimitInterface
         $this->allowance            = $allowance;
         $this->allowance_updated_at = $timestamp;
         $this->save();
-    }
-
-    public function findIdentity($id)
-    {
-        return static::find()
-            ->where(['id' => $id, 'verified' => 1])
-            ->one();
     }
 }

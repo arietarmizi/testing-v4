@@ -17,10 +17,10 @@ class AuthController extends Controller
     {
         $behaviors = parent::behaviors();
 //
-//        $behaviors['authenticator']['except'] = [
-//            'login',
-//            'register',
-//        ];
+        $behaviors['authenticator']['except'] = [
+            'login',
+            'register',
+        ];
 
         $behaviors['content-type-filter'] = [
             'class'       => ContentTypeFilter::class,

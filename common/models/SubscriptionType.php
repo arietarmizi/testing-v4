@@ -70,4 +70,9 @@ class SubscriptionType extends ActiveRecord
         return $this->status = self::STATUS_ACTIVE;
     }
 
+    public function getSubscription()
+    {
+        return $this->hasMany(Subscription::class, ['subscriptionTypeId' => 'id']);
+    }
+
 }

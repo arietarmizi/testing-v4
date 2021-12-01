@@ -4,6 +4,7 @@
 namespace common\models;
 
 
+use Carbon\Carbon;
 use common\base\ActiveRecord;
 
 /**
@@ -48,5 +49,18 @@ class Marketplace extends ActiveRecord
     public static function tableName()
     {
         return '{{%marketplace}}';
+    }
+
+    public function generateCode()
+    {
+        $code = Marketplace::find()
+            ->where([
+                'between',
+                'createdAt',
+                Carbon::now()->startOfDay()->format('Y-m-d H:i:s'),
+                Carbon::now()->endOfDay()->format('Y-m-d H:i:s')
+            ])->count();
+
+        $this->code = 'MKP' . date('Ymd') . substr((100000 + ($code + 1)), 1);
     }
 }
