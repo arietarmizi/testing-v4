@@ -1,6 +1,6 @@
 <?php
 
-namespace api\controllers\tokopedia;
+namespace api\controllers;
 
 use api\actions\ListAction;
 use api\components\Controller;
@@ -12,8 +12,6 @@ use api\forms\tokopedia\product\GetAllProductsForm;
 use api\forms\tokopedia\product\GetInfoByIdForm;
 use api\forms\tokopedia\product\GetInfoBySkuForm;
 use api\forms\tokopedia\product\GetProductVariantForm;
-use common\models\Category;
-use common\models\Marketplace;
 use common\models\Product;
 
 class ProductController extends Controller

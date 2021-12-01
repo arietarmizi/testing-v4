@@ -5,7 +5,7 @@ namespace api\forms\category;
 use api\components\BaseForm;
 use common\models\Product;
 use common\models\ProductCategory;
-use common\models\ProductCategoryDetail;
+use common\models\ProductSubCategory;
 use common\models\Provider;
 use yii\helpers\ArrayHelper;
 
@@ -58,7 +58,7 @@ class ScrapFrom extends BaseForm
 //                    ->where(['id' => (string)$remoteCategoryChild['id']])
 //                    ->one();
 //                if (!$remoteCategoryChild) {
-                $categoryDetail = new ProductCategoryDetail();
+                $categoryDetail = new ProductSubCategory();
 //                }
                 $categoryDetail->productCategoryId = $remoteCategory['id'];
                 $categoryDetail->id                = $remoteCategoryChild['id'];

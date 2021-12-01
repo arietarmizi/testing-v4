@@ -1,6 +1,6 @@
 <?php
 
-namespace api\controllers\tokopedia;
+namespace api\controllers;
 
 use api\components\Controller;
 use api\components\FormAction;

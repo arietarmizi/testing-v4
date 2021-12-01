@@ -1,16 +1,16 @@
 <?php
 
 
-namespace api\controllers\tokopedia;
+namespace api\controllers;
 
 
+use api\config\ApiCode;
+use api\forms\category\ScrapFrom;
 use api\components\Controller;
 use api\components\FormAction;
-use api\config\ApiCode;
 use api\filters\ContentTypeFilter;
-use api\forms\tokopedia\order\GetSingleOrderForm;
 
-class OrderController extends Controller
+class CategoryController extends Controller
 {
     public function behaviors()
     {
@@ -19,22 +19,22 @@ class OrderController extends Controller
             'class'       => ContentTypeFilter::class,
             'contentType' => ContentTypeFilter::TYPE_APPLICATION_JSON,
             'only'        => [
-                'get-single-order'
+                'scrap'
             ]
         ];
         return $behaviors;
     }
 
-    public function Actions()
+    public function actions()
     {
         return [
-            'get-single-order' => [
+            'scrap' => [
                 'class'          => FormAction::className(),
-                'formClass'      => GetSingleOrderForm::className(),
-                'messageSuccess' => \Yii::t('app', 'Get Single Order Success.'),
-                'messageFailed'  => \Yii::t('app', 'Get Single Order Failed.'),
+                'formClass'      => ScrapFrom::className(),
+                'messageSuccess' => \Yii::t('app', 'Scrap All Product Categories Success.'),
+                'messageFailed'  => \Yii::t('app', 'Scrap All Product Categories Failed.'),
                 'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
-                'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE
+                'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
             ],
         ];
     }
@@ -42,7 +42,7 @@ class OrderController extends Controller
     public function verbs()
     {
         return [
-            'get-single-order' => ['post'],
+            'scrap' => ['post']
         ];
     }
 }

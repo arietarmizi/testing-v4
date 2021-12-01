@@ -12,8 +12,8 @@ class SiteController extends Controller
 {
     public function behaviors()
     {
-        $behaviors                              = parent::behaviors();
-        $behaviors['systemAppFilter']['except'] = ['index'];
+        $behaviors = parent::behaviors();
+//        $behaviors['systemAppFilter']['except'] = ['index'];
 
         return $behaviors;
     }
@@ -27,6 +27,8 @@ class SiteController extends Controller
         $response->code    = 0;
         $response->status  = 200;
         $response->data    = 'You are accessing this endpoint from ' . \Yii::$app->request->getUserIP();
+
+        return $response;
 
     }
 

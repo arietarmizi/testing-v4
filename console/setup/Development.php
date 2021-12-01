@@ -60,7 +60,7 @@ class Development extends BaseObject
 
         $superuser        = new Admin();
         $superuser->name  = 'Superuser PTPL';
-        $superuser->email = 'lms@pertamina.com';
+        $superuser->email = 'admin@admin.com';
         $superuser->setPassword('p4ssw0rd##');
         $superuser->phoneNumber = '081111111111';
         $superuser->save();
@@ -69,7 +69,7 @@ class Development extends BaseObject
 
         $administrator        = new Admin();
         $administrator->name  = 'Admin PTPL';
-        $administrator->email = 'lms-administrator@pertamina.com';
+        $administrator->email = 'admin2@admin.com';
         $administrator->setPassword('p4ssw0rd##');
         $administrator->phoneNumber = '082222222222';
         $administrator->save();

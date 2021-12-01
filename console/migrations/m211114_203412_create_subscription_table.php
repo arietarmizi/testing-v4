@@ -15,13 +15,12 @@ class m211114_203412_create_subscription_table extends Migration
     {
         $this->createTable(Subscription::tableName(), [
             'id'                 => $this->string(36)->notNull(),
-            'userId'             => $this->string(36),
-            'subscriptionTypeId' => $this->string(36),
-            'isSupportMultiple'  => $this->boolean()->defaultValue(0),
-            'subscriptionDate'   => $this->dateTime(),
-            'remainingQuota'     => $this->double(53)->notNull(),
+            'userId'             => $this->string(36)->notNull(),
+            'subscriptionTypeId' => $this->string(36)->notNull(),
+            'registerAt'         => $this->dateTime(),
             'expiredAt'          => $this->dateTime(),
-            'priority'           => $this->integer(10),
+            'usedQuota'          => $this->integer(10),
+            'remainingQuota'     => $this->double(53)->notNull(),
             'status'             => $this->string(50)->defaultValue(Subscription::STATUS_ACTIVE),
             'createdAt'          => $this->dateTime(),
             'updatedAt'          => $this->dateTime(),

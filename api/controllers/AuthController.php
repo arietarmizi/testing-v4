@@ -8,6 +8,7 @@ use api\components\Controller;
 use api\components\FormAction;
 use api\config\ApiCode;
 use api\filters\ContentTypeFilter;
+use api\forms\auth\LoginForm;
 use api\forms\auth\RegisterForm;
 
 class AuthController extends Controller
@@ -15,7 +16,7 @@ class AuthController extends Controller
     public function behaviors()
     {
         $behaviors = parent::behaviors();
-
+//
 //        $behaviors['authenticator']['except'] = [
 //            'login',
 //            'register',
@@ -44,13 +45,24 @@ class AuthController extends Controller
                 'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
                 'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
             ],
+            'login'    => [
+                'class'          => FormAction::class,
+                'formClass'      => LoginForm::class,
+                'messageSuccess' => \Yii::t('app', 'Login Success.'),
+                'messageFailed'  => \Yii::t('app', 'Login Failed.'),
+                'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
+                'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
+                'statusSuccess'  => 200,
+                'statusFailed'   => 400,
+            ],
         ];
     }
 
     public function verbs()
     {
         return [
-            'register' => ['post']
+            'register' => ['post'],
+            'login'    => ['post'],
         ];
     }
 }

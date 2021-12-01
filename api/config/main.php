@@ -12,10 +12,10 @@ $params = array_merge(
 
 return [
     'id'                  => 'app-api',
+    'name'                => 'E-Commerce Enabler API',
     'basePath'            => dirname(__DIR__),
     'bootstrap'           => ['log'],
     'controllerNamespace' => 'api\controllers',
-    'name'                => 'E-Commerce Enabler API',
     'components'          => [
         'request'      => [
             'enableCookieValidation' => false,
@@ -25,7 +25,7 @@ return [
         'user'         => [
             'identityClass'   => \common\models\User::class,
             'enableAutoLogin' => true,
-            'identityCookie'  => ['name' => '_identity-backend', 'httpOnly' => true],
+            'identityCookie'  => ['name' => '_identity-api-user', 'httpOnly' => true],
             'loginUrl'        => ['auth/login']
         ],
         'response'     => [

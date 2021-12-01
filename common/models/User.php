@@ -8,7 +8,7 @@ use common\base\ActiveRecord;
 use Ramsey\Uuid\Uuid;
 use yii\base\NotSupportedException;
 use yii\filters\RateLimitInterface;
-use yii\web\IdentityInterface;
+
 
 /**
  * Class User
@@ -33,6 +33,11 @@ use yii\web\IdentityInterface;
  * @property string                $createdAt
  * @property string                $updatedAt
  *
+ * @property Device                $currentDevice
+ *
+ * @property Device[]              $devices
+ * @property Device[]              $activeDevices
+ *
  * @property NotSupportedException $authKey
  */
 class User extends ActiveRecord implements RateLimitInterface
@@ -51,6 +56,9 @@ class User extends ActiveRecord implements RateLimitInterface
     private $requestCodeDuration  = 5;
     private $requestResetDuration = 60;
     private $codeExpiredDuration  = 5;
+
+    /** @var Device */
+    private $_currentDevice;
 
     public static function statuses()
     {
@@ -74,6 +82,65 @@ class User extends ActiveRecord implements RateLimitInterface
     {
         return '{{%user}}';
     }
+
+    public static function findIdentityByAccessToken($token, $type = null)
+    {
+        /** @var Device $device */
+        $device = Device::find()
+            ->where([
+                'accessToken'                   => $token,
+                Device::tableName() . '.status' => Device::STATUS_ACTIVE,
+            ])
+            ->with(['user'])
+            ->one();
+
+        if ($device) {
+            $user = $device->user;
+            if ($user->status == User::STATUS_ACTIVE) {
+                $user->currentDevice = $device;
+                return $user;
+            }
+        }
+
+        return null;
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'id'                 => \Yii::t('app', 'Id'),
+            'outletId'           => \Yii::t('app', 'Outlet Code'),
+            'identityCardNumber' => \Yii::t('app', 'Identity Card Number'),
+            'type'               => \Yii::t('app', 'Type'),
+            'name'               => \Yii::t('app', 'Name'),
+            'email'              => \Yii::t('app', 'Email'),
+            'phoneNumber'        => \Yii::t('app', 'PhoneNumber'),
+            'passwordHash'       => \Yii::t('app', 'PasswordHash'),
+            'birthDate'          => \Yii::t('app', 'BirthDate'),
+            'verified'           => \Yii::t('app', 'Verified'),
+            'status'             => \Yii::t('app', 'Status'),
+            'createdAt'          => \Yii::t('app', 'Created At'),
+            'updatedAt'          => \Yii::t('app', 'Updated At'),
+        ];
+    }
+
+    public function attributeHints()
+    {
+        return [
+            'id'               => \Yii::t('app', 'Id'),
+            'userId'           => \Yii::t('app', 'User Id'),
+            'quotaId'          => \Yii::t('app', 'quotaId'),
+            'deviceIdentifier' => \Yii::t('app', 'deviceIdentifier'),
+            'qrCode'           => \Yii::t('app', 'qrCode'),
+            'point'            => \Yii::t('app', 'point'),
+            'latitude'         => \Yii::t('app', 'latitude'),
+            'longitude'        => \Yii::t('app', 'longitude'),
+            'status'           => \Yii::t('app', 'Status'),
+            'createdAt'        => \Yii::t('app', 'Created At'),
+            'updatedAt'        => \Yii::t('app', 'Updated At'),
+        ];
+    }
+
     public function fields()
     {
         $fields = parent::fields();
@@ -90,6 +157,22 @@ class User extends ActiveRecord implements RateLimitInterface
     public function validatePassword($password)
     {
         return \Yii::$app->security->validatePassword($password, $this->passwordHash);
+    }
+
+    /**
+     * @return Device|null
+     */
+    public function getCurrentDevice()
+    {
+        return $this->_currentDevice;
+    }
+
+    /**
+     * @param Device $currentDevice
+     */
+    public function setCurrentDevice($currentDevice)
+    {
+        $this->_currentDevice = $currentDevice;
     }
 
     public function getId()
@@ -121,6 +204,25 @@ class User extends ActiveRecord implements RateLimitInterface
         throw new NotSupportedException();
     }
 
+    public function getDevices()
+    {
+        return $this->hasMany(Device::class, ['userId' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getActiveDevices()
+    {
+        return $this->hasMany(Device::class, ['userId' => 'id'])
+            ->andWhere([Device::tableName() . '.status' => Device::STATUS_ACTIVE]);
+    }
+
+    public function getForgotPasswords()
+    {
+        return $this->hasMany(ForgotPassword::class, ['userId', 'id']);
+    }
+
     public function getRateLimit($request, $action)
     {
         return [$this->rateLimit, 20];
@@ -136,5 +238,12 @@ class User extends ActiveRecord implements RateLimitInterface
         $this->allowance            = $allowance;
         $this->allowance_updated_at = $timestamp;
         $this->save();
+    }
+
+    public function findIdentity($id)
+    {
+        return static::find()
+            ->where(['id' => $id, 'verified' => 1])
+            ->one();
     }
 }

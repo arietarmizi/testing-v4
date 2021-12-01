@@ -57,7 +57,6 @@ class RegisterForm extends BaseForm
         $transaction = \Yii::$app->db->beginTransaction();
 
         $user                     = new User();
-        $user->merchantId         = $this->merchantId;
         $user->identityCardNumber = $this->identityCardNumber;
         $user->name               = $this->name;
         $user->phoneNumber        = $this->phoneNumber;

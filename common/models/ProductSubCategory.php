@@ -17,7 +17,7 @@ use common\base\ActiveRecord;
  * @property string $createdAt
  * @property string $updatedAt
  */
-class ProductCategoryDetail extends ActiveRecord
+class ProductSubCategory extends ActiveRecord
 {
     const STATUS_ACTIVE   = 'active';
     const STATUS_INACTIVE = 'inactive';
@@ -32,7 +32,7 @@ class ProductCategoryDetail extends ActiveRecord
 
     public static function tableName()
     {
-        return '{{%product_category_detail}}';
+        return '{{%product_sub_category}}';
     }
 
     public function behaviors()

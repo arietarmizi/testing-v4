@@ -11,11 +11,14 @@ use common\base\ActiveRecord;
  * @package common\models
  *
  * @property string  $id
- * @property string  $price
+ * @property string  $name
  * @property integer $duration
  * @property string  $durationType
- * @property string  $description
+ * @property boolean $isSupportMultiple
  * @property string  $transactionQuota
+ * @property string  $price
+ * @property string  $description
+ * @property integer $priority
  * @property string  $status
  * @property string  $createdAt
  * @property string  $updatedAt
@@ -24,6 +27,8 @@ class SubscriptionType extends ActiveRecord
 {
     const STATUS_ACTIVE   = 'active';
     const STATUS_INACTIVE = 'inactive';
+
+    const STATUS_DELETED = 'deleted';
 
     const DURATION_YEAR  = 'year';
     const DURATION_MONTH = 'month';
@@ -48,9 +53,21 @@ class SubscriptionType extends ActiveRecord
         ];
     }
 
+    public static function deleted()
+    {
+        return [
+            self::STATUS_DELETED => \Yii::t('app', 'Deleted')
+        ];
+    }
+
     public static function tableName()
     {
         return '{{%subscription_type}}';
+    }
+
+    public function isActive()
+    {
+        return $this->status = self::STATUS_ACTIVE;
     }
 
 }
