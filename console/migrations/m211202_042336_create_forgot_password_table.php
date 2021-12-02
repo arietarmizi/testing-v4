@@ -1,14 +1,13 @@
 <?php
 
-use common\models\ForgotPassword;
 use common\models\User;
 use console\base\Migration;
-
+use common\models\ForgotPassword;
 
 /**
- * Handles the creation of table `forgot_password`.
+ * Handles the creation of table `{{%forgot_password}}`.
  */
-class m180812_005135_create_forgot_password_table extends Migration
+class m211202_042336_create_forgot_password_table extends Migration
 {
     /**
      * {@inheritdoc}
