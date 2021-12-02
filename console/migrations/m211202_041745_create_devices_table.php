@@ -1,20 +1,19 @@
 <?php
 
+use console\base\Migration;
 use common\models\Device;
 use common\models\User;
-use console\base\Migration;
 
 /**
- * Handles the creation of table `device`.
+ * Handles the creation of table `{{%devices}}`.
  */
-class m180812_005106_create_device_table extends Migration
+class m211202_041745_create_devices_table extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-
         $this->createTable(Device::tableName(), [
             'id'            => $this->string(36)->notNull(),
             'userId'        => $this->string(36)->notNull(),
