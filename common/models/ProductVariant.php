@@ -29,6 +29,7 @@ use common\base\ActiveRecord;
  * @property double  $height
  * @property double  $weight
  * @property string  $barcode
+ * @property double  $discount
  * @property boolean $isPreOrder
  * @property double  $minPreOrderDay
  * @property string  $productInformationId
@@ -75,7 +76,7 @@ class ProductVariant extends ActiveRecord
     public static function statuses()
     {
         return [
-            self:: STATUS_ACTIVE  => \Yii::t('app', 'Active'),
+            self::STATUS_ACTIVE   => \Yii::t('app', 'Active'),
             self::STATUS_INACTIVE => \Yii::t('app', 'Inactive')
         ];
     }

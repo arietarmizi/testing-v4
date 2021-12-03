@@ -1,8 +1,6 @@
 <?php
 
-
 namespace api\controllers;
-
 
 use api\actions\ListAction;
 use api\components\Controller;
@@ -16,7 +14,7 @@ use api\forms\tokopedia\product\GetInfoBySkuForm;
 use api\forms\tokopedia\product\GetProductVariantForm;
 use common\models\Product;
 
-class ProductController extends Controller
+class TokopediaProductController extends Controller
 {
     public function behaviors()
     {
@@ -25,7 +23,11 @@ class ProductController extends Controller
             'class'       => ContentTypeFilter::class,
             'contentType' => ContentTypeFilter::TYPE_APPLICATION_JSON,
             'only'        => [
-                'create',
+                'get-all',
+                'product-info-by-id',
+                'product-info-by-sku',
+                'get-variant',
+                'create'
             ]
         ];
         return $behaviors;
@@ -34,7 +36,39 @@ class ProductController extends Controller
     public function Actions()
     {
         return [
-            'create' => [
+            'get-all'             => [
+                'class'          => FormAction::className(),
+                'formClass'      => GetAllProductsForm::className(),
+                'messageSuccess' => \Yii::t('app', 'Get All Products Success.'),
+                'messageFailed'  => \Yii::t('app', 'Get All Products Failed.'),
+                'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
+                'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
+            ],
+            'product-info-by-id'  => [
+                'class'          => FormAction::className(),
+                'formClass'      => GetInfoByIdForm::className(),
+                'messageSuccess' => \Yii::t('app', 'Get Info Products By ID Success.'),
+                'messageFailed'  => \Yii::t('app', 'Get Info Products By ID Failed.'),
+                'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
+                'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
+            ],
+            'product-info-by-sku' => [
+                'class'          => FormAction::className(),
+                'formClass'      => GetInfoBySkuForm::className(),
+                'messageSuccess' => \Yii::t('app', 'Get Info Products By SKU Success.'),
+                'messageFailed'  => \Yii::t('app', 'Get Info Products By SKU Failed.'),
+                'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
+                'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
+            ],
+            'get-variant'         => [
+                'class'          => FormAction::className(),
+                'formClass'      => GetProductVariantForm::className(),
+                'messageSuccess' => \Yii::t('app', 'Get Product Variant By Category ID Success.'),
+                'messageFailed'  => \Yii::t('app', 'Get Product Variant By Category ID Failed.'),
+                'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
+                'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
+            ],
+            'create'              => [
                 'class'          => FormAction::className(),
                 'formClass'      => CreateProductForm::className(),
                 'messageSuccess' => \Yii::t('app', 'Create Product Success.'),
@@ -42,7 +76,7 @@ class ProductController extends Controller
                 'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
                 'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
             ],
-            'list'   => [
+            'list'                => [
                 'class'             => ListAction::class,
                 'query'             => function () {
                     return Product::find()
@@ -75,8 +109,11 @@ class ProductController extends Controller
     public function verbs()
     {
         return [
-            'list'   => ['get'],
-            'create' => ['post']
+            'get-all'             => ['post'],
+            'product-info-by-id'  => ['post'],
+            'product-info-by-sku' => ['post'],
+            'get-variant'         => ['post'],
+            'create'              => ['post']
         ];
     }
 }

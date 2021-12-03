@@ -30,6 +30,7 @@ class m211114_174236_create_product_variant_table extends Migration
             'length'             => $this->double(53),
             'width'              => $this->double(53),
             'height'             => $this->double(53),
+            'weight'             => $this->double(53),
             'barcode'            => $this->text(),
             'isPreOrder'         => $this->boolean()->defaultValue(0),
             'minPreOrderDay'     => $this->double(53),

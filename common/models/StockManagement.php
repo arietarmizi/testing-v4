@@ -11,11 +11,14 @@ use common\base\ActiveRecord;
  * @package common\models
  *
  * @property string $id
- * @property string $sku
  * @property string $productVariantId
+ * @property double $promotionStock
+ * @property double $orderedStock
+ * @property double $availableStock
+ * @property double $onHandStock
+ * @property double $stockAlert
  * @property string $warehouseId
  * @property string $stockType
- * @property double $quantity
  * @property string $status
  * @property string $createdAt
  * @property string $updatedAt
@@ -24,6 +27,17 @@ class StockManagement extends ActiveRecord
 {
     const STATUS_ACTIVE   = 'active';
     const STATUS_INACTIVE = 'inactive';
+
+    const STOCK_IN  = 'in';
+    const STOCK_OUT = 'out';
+
+    public static function stocks()
+    {
+        return [
+            self::STOCK_IN  => \Yii::t('app', 'Stock In'),
+            self::STOCK_OUT => \Yii::t('app', 'Stock Out'),
+        ];
+    }
 
     public static function statuses()
     {

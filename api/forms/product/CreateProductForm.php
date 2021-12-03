@@ -1,7 +1,7 @@
 <?php
 
 
-namespace api\forms\tokopedia\product;
+namespace api\forms\product;
 
 
 use api\components\BaseForm;
@@ -10,16 +10,14 @@ use common\models\Product;
 class CreateProductForm extends BaseForm
 {
     public $id;
-    public $fsId;
-    public $merchantId;
-    public $productCategoryId;
-    public $sku;
+    public $shopId;
+    public $productSubCategoryId;
     public $code;
     public $name;
     public $condition;
     public $minOrder;
-    public $defaultPrice;
     public $productDescription;
+    public $isMaster;
     public $description;
     public $status;
 
@@ -34,10 +32,10 @@ class CreateProductForm extends BaseForm
     public function rules()
     {
         return [
-            [['id', 'fsId', 'name'], 'required'],
-            [['name', 'description'], 'string'],
-            [['id', 'fsId', 'productCategoryId'], 'number'],
-            [['id'], 'validateProduct']
+            [['id', 'shopId', 'name'], 'required'],
+            [['name', 'description', 'condition', 'productDescription'], 'string'],
+            [['id', 'shopId', 'productSubCategoryId', 'minOrder', 'isMaster'], 'number'],
+            ['id', 'validateProduct']
         ];
     }
 
@@ -48,13 +46,17 @@ class CreateProductForm extends BaseForm
 
     protected function _createProduct()
     {
-        $transaction                = \Yii::$app->db->beginTransaction();
-        $product                    = new Product();
-        $product->id                = $this->id;
-        $product->fsId              = $this->fsId;
-        $product->productCategoryId = $this->productCategoryId;
-        $product->name              = $this->name;
-        $product->description       = $this->description;
+        $transaction                   = \Yii::$app->db->beginTransaction();
+        $product                       = new Product();
+        $product->id                   = $this->id;
+        $product->shopId               = $this->shopId;
+        $product->productSubCategoryId = $this->productSubCategoryId;
+        $product->name                 = $this->name;
+        $product->condition            = $this->condition;
+        $product->minOrder             = $this->minOrder;
+        $product->productDescription   = $this->productDescription;
+        $product->description          = $this->description;
+        $product->isMaster             = true;
         $product->save();
         if ($product->save()) {
             $product->refresh();

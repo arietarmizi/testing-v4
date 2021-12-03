@@ -12,8 +12,9 @@ class SiteController extends Controller
 {
     public function behaviors()
     {
-        $behaviors = parent::behaviors();
-//        $behaviors['systemAppFilter']['except'] = ['index'];
+        $behaviors                              = parent::behaviors();
+        $behaviors['authenticator']['except']   = ['index'];
+        $behaviors['systemAppFilter']['except'] = ['index'];
 
         return $behaviors;
     }

@@ -18,19 +18,36 @@ return [
 
 
 //    TOKOPEDIA PRODUCTS
-    'tokopedia/product/get-all'             => 'tokopedia/product/get-all',
+    'product/get-all'                       => 'product/get-all',
     'tokopedia/product/product-info-by-id'  => 'tokopedia/product/product-info-by-id',
     'tokopedia/product/product-info-by-sku' => 'tokopedia/product/product-info-by-sku',
     'tokopedia/product/get-variant'         => 'tokopedia/product/get-variant',
-    'tokopedia/product/create'              => 'tokopedia/product/create',
-    'product/product/list'                  => 'product/product/list',
 
-    'tokopedia/order/get-single-order'                   => 'tokopedia/order/get-single-order',
+    'tokopedia/order/get-single-order' => 'tokopedia/order/get-single-order',
+
+    'product/create' => 'product/create',
+    'product/list'   => 'product/list',
+
+    'product-variant/store' => 'product-variant/store',
+    'product-variant/list'  => 'product-variant/list',
+
+    'product-bundle/store' => 'product-bundle/store',
+    'product-bundle/list'  => 'product-bundle/list',
+
+    'product-bundle-detail/store' => 'product-bundle-detail/store',
+    'product-bundle-detail/list'  => 'product-bundle-detail/list',
+
+    'product-promo/store' => 'product-promo/store',
+    'product-promo/list'  => 'product-promo/list',
+
+    'product-discount/store' => 'product-discount/store',
+    'product-discount/list'  => 'product-discount/list',
+
+    'stock-management/store'                             => 'stock-management/store',
+    'stock-management/list'                              => 'stock-management/list',
 
 //    Category
-    'tokopedia/category/scrap'                           => 'tokopedia/category/scrap',
-
-//    AUTH USER
+    'category/scrap'                                     => 'category/scrap',
 
 //    SUBSCRIPTION TYPE
     'subscription-type/store'                            => 'subscription-type/store',

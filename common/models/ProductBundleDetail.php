@@ -11,6 +11,7 @@ use common\base\ActiveRecord;
  * @package common\models
  *
  * @property string $id
+ * @property string $productBundleId
  * @property string $productVariantId
  * @property double $quantity
  * @property string $createdAt
