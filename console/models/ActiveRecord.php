@@ -2,8 +2,7 @@
 
 namespace console\models;
 
-use nadzif\base\models\ActiveRecord as BaseActiveRecord;
-//use console\models\ActiveRecord as BaseActiveRecord;
+use common\base\ActiveRecord as BaseActiveRecord;
 use Ramsey\Uuid\Uuid;
 
 class ActiveRecord extends BaseActiveRecord

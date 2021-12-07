@@ -30,6 +30,29 @@ return [
         'authManager'       => [
             'class' => yii\rbac\DbManager::className(),
         ],
+        'i18n'              => [
+            'translations' => [
+                'app*' => [
+                    'class'           => \yii\i18n\DbMessageSource::class,
+                    'sourceLanguage'  => 'en',
+                    'db'              => 'db',
+                    'cachingDuration' => 24 * 3600,
+                    'enableCaching'   => true
+                ],
+
+            ],
+        ],
+        'fileManager'       => [
+            'class'                     => \nadzif\file\FileManager::className(),
+            'db'                        => 'db',
+            'alias'                     => \nadzif\file\models\File::ALIAS_API,
+            'defaultImageThumbnail'     => '@frontend/web/images/thumb-image.jpg',
+            'defaultDocumentThumbnail'  => '@frontend/web/images/thumb-document.jpg',
+            'defaultAudioThumbnail'     => '@frontend/web/images/thumb-audio.jpg',
+            'defaultVideoThumbnail'     => '@frontend/web/images/thumb-video.jpg',
+            'defaultOtherThumbnail'     => '@frontend/web/images/thumb-other.jpg',
+            'allowedDocumentExtensions' => ['txt', 'pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'csv']
+        ],
         'tokopediaProvider' => function () {
             return Provider::find()
                 ->where(['type' => Provider::TYPE_TOKOPEDIA, 'status' => Provider::STATUS_ACTIVE])

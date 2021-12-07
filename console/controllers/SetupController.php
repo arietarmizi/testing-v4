@@ -2,6 +2,7 @@
 
 namespace console\controllers;
 
+use common\helpers\FolderManager;
 use common\models\Admin;
 use common\models\Provider;
 use common\models\ProviderConfig;
@@ -21,6 +22,7 @@ class SetupController extends Controller
         $this->actionSystemConfig();
         $this->actionAdmin();
         $this->actionProvider();
+        $this->actionInitFolder();
     }
 
     public function actionSystemApp()
@@ -104,5 +106,16 @@ class SetupController extends Controller
         }
 
         $this->stdout($provider->name . " provider created!...\n", Console::FG_GREEN);
+    }
+
+    public function actionInitFolder()
+    {
+        $this->stdout("Prepare init product image folder...\n");
+
+        $this->stdout("\nCreating required folder...\n", Console::FG_BLUE);
+
+        $ProductImageFolder = FolderManager::makeDirectory('@api', 'uploads' . DIRECTORY_SEPARATOR . 'product');
+
+        $this->stdout("Folder product image created successfully!...\n", Console::FG_GREEN);
     }
 }

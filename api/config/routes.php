@@ -25,8 +25,9 @@ return [
 
     'tokopedia/order/get-single-order' => 'tokopedia/order/get-single-order',
 
-    'product/create' => 'product/create',
-    'product/list'   => 'product/list',
+    'product/create'    => 'product/create',
+    'product/list'      => 'product/list',
+    'product/add-image' => 'product/add-image',
 
     'product-variant/store' => 'product-variant/store',
     'product-variant/list'  => 'product-variant/list',

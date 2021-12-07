@@ -9,6 +9,7 @@ use api\components\Controller;
 use api\components\FormAction;
 use api\config\ApiCode;
 use api\filters\ContentTypeFilter;
+use api\forms\product\AddProductImagesForm;
 use api\forms\product\CreateProductForm;
 use api\forms\tokopedia\product\GetAllProductsForm;
 use api\forms\tokopedia\product\GetInfoByIdForm;
@@ -34,7 +35,7 @@ class ProductController extends Controller
     public function Actions()
     {
         return [
-            'create' => [
+            'create'    => [
                 'class'          => FormAction::className(),
                 'formClass'      => CreateProductForm::className(),
                 'messageSuccess' => \Yii::t('app', 'Create Product Success.'),
@@ -42,7 +43,7 @@ class ProductController extends Controller
                 'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
                 'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
             ],
-            'list'   => [
+            'list'      => [
                 'class'             => ListAction::class,
                 'query'             => function () {
                     return Product::find()
@@ -69,6 +70,16 @@ class ProductController extends Controller
                 'apiCodeFailed'     => 400,
                 'successMessage'    => \Yii::t('app', 'Get product list success'),
             ],
+            'add-image' => [
+                'class'          => FormAction::class,
+                'formClass'      => AddProductImagesForm::class,
+                'messageSuccess' => \Yii::t('app', 'Add product image success'),
+                'messageFailed'  => \Yii::t('app', 'Add product image failed'),
+                'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
+                'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
+                'statusSuccess'  => 200,
+                'statusFailed'   => 400,
+            ]
         ];
     }
 
