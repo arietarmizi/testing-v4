@@ -13,6 +13,8 @@ return [
     'auth/register' => 'auth/register',
     'auth/login'    => 'auth/login',
 
+    'account/profile' => 'account/profile',
+
 
     'dummy'                                 => 'dummy',
 
@@ -44,11 +46,17 @@ return [
     'product-discount/store' => 'product-discount/store',
     'product-discount/list'  => 'product-discount/list',
 
-    'stock-management/store'                             => 'stock-management/store',
-    'stock-management/list'                              => 'stock-management/list',
+    'stock-management/store' => 'stock-management/store',
+    'stock-management/list'  => 'stock-management/list',
+
+    'master-status/store'                                => 'master-status/store',
+    'master-status/list'                                 => 'master-status/list',
+    'master-status/<id:' . $uuidPattern . '>'            => 'master-status/update',
+    'master-status/delete/<id:' . $uuidPattern . '>'     => 'master-status/delete',
 
 //    Category
     'category/scrap'                                     => 'category/scrap',
+    'category/list'                                      => 'category/list',
 
 //    SUBSCRIPTION TYPE
     'subscription-type/store'                            => 'subscription-type/store',
@@ -57,10 +65,12 @@ return [
     'subscription-type/delete/<id:' . $uuidPattern . '>' => 'subscription-type/delete',
 
     'subscription/store' => 'subscription/store',
+    'subscription/list'  => 'subscription/list',
 
     'marketplace/store' => 'marketplace/store',
 
     'shop/store' => 'shop/store',
+    'shop/list'  => 'shop/list',
 
 
 ];

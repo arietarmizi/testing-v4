@@ -15,6 +15,7 @@ class m211114_141217_create_product_table extends Migration
     {
         $this->createTable(Product::tableName(), [
             'id'                   => $this->string(36)->notNull(),
+            'marketplaceProductId' => $this->string(36),
             'shopId'               => $this->string(36),
             'productSubCategoryId' => $this->string(36),
             'code'                 => $this->string(50),

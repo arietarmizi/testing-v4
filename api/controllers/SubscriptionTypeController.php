@@ -27,8 +27,6 @@ class SubscriptionTypeController extends Controller
             'only'        => [
                 'store',
                 'update',
-                'list',
-                'delete'
             ],
         ];
         return $behaviors;

@@ -7,7 +7,7 @@ use common\models\Shop;
 
 class StoreShopForm extends BaseForm
 {
-    public $id;
+    public $marketplaceShopId;
     public $marketplaceId;
     public $fsId;
     public $userId;
@@ -20,7 +20,7 @@ class StoreShopForm extends BaseForm
     public function rules()
     {
         return [
-            [['id', 'fsId', 'marketplaceId', 'shopName'], 'required'],
+            [['marketplaceShopId', 'fsId', 'marketplaceId', 'shopName'], 'required'],
             [['fsId', 'userId', 'shopName', 'description'], 'string']
         ];
     }
@@ -29,14 +29,14 @@ class StoreShopForm extends BaseForm
     {
         $user = \Yii::$app->user->identity;
 
-        $shop                = new Shop();
-        $shop->id            = $this->id;
-        $shop->marketplaceId = $this->marketplaceId;
-        $shop->fsId          = $this->fsId;
-        $shop->userId        = $user->id;
-        $shop->shopName      = $this->shopName;
-        $shop->description   = $this->description;
-        $shop->isOpen        = true;
+        $shop                    = new Shop();
+        $shop->marketplaceShopId = $this->marketplaceShopId;
+        $shop->marketplaceId     = $this->marketplaceId;
+        $shop->fsId              = $this->fsId;
+        $shop->userId            = $user->id;
+        $shop->shopName          = $this->shopName;
+        $shop->description       = $this->description;
+        $shop->isOpen            = true;
 
         $shop->save();
         $shop->refresh();

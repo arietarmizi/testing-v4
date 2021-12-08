@@ -11,6 +11,7 @@ use common\base\ActiveRecord;
  * @package common\models
  *
  * @property string  $id
+ * @property string  $marketplaceProductId
  * @property string  $marketplaceId
  * @property string  $productId
  * @property string  $shopId
@@ -65,11 +66,5 @@ class Product extends ActiveRecord
         return $this->hasMany(Product::class, ['categoryId' => 'id']);
     }
 
-    public function behaviors()
-    {
-        $behaviors = parent::behaviors();
-        unset($behaviors['uuid']);
-        return $behaviors;
-    }
 
 }

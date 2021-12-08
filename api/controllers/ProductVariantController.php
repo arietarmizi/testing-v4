@@ -7,10 +7,12 @@ namespace api\controllers;
 use api\actions\ListAction;
 use api\components\Controller;
 use api\components\FormAction;
+use api\components\Response;
 use api\config\ApiCode;
 use api\filters\ContentTypeFilter;
 use api\forms\productvariant\StoreProductVariantForm;
 use common\models\ProductVariant;
+use yii\helpers\ArrayHelper;
 
 class ProductVariantController extends Controller
 {
@@ -41,45 +43,61 @@ class ProductVariantController extends Controller
                 'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
                 'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
             ],
-            'list'  => [
-                'class'             => ListAction::class,
-                'query'             => function () {
-                    return ProductVariant::find()
-                        ->where([ProductVariant::tableName() . '.status' => ProductVariant::STATUS_ACTIVE])
-                        ->addOrderBy([ProductVariant::tableName() . '.name' => SORT_ASC]);
-                },
-                'toArrayProperties' => [
-                    ProductVariant::class => [
-                        'sku',
-                        'productId',
-                        'name',
-                        'isShelfLife',
-                        'duration',
-                        'inboundLimit',
-                        'outboundLimit',
-                        'minOrder',
-                        'productDescription',
-                        'description',
-                        'defaultPrice',
-                        'length',
-                        'width',
-                        'height',
-                        'weight',
-                        'barcode',
-                        'isPreOrder',
-                        'minPreOrderDay',
-                        'discount',
-                        'isWholesale',
-                        'isFreeReturn',
-                        'isMustInsurance',
-                        'status'
-                    ],
-                ],
-                'apiCodeSuccess'    => 0,
-                'apiCodeFailed'     => 400,
-                'successMessage'    => \Yii::t('app', 'Get Product Variant List Success'),
-            ]
         ];
+    }
+
+    public function actionList()
+    {
+        $masterStatus = ProductVariant::find()
+            ->joinWith(['product'])
+            ->all();
+
+        $response          = new Response();
+        $response->status  = 200;
+        $response->name    = 'Product Variant Data';
+        $response->code    = ApiCode::DEFAULT_SUCCESS_CODE;
+        $response->message = \Yii::t('app', 'Get Product Variant Success.');
+        $response->data    = ArrayHelper::toArray($masterStatus, [
+            ProductVariant::class => [
+                'id',
+                'product' => function ($model) {
+                    /** @var ProductVariant $model */
+                    return [
+                        'id'                 => $model->productId,
+                        'code'               => $model->product->code,
+                        'name'               => $model->product->name,
+                        'condition'          => $model->product->condition,
+                        'productDescription' => $model->product->productDescription,
+                        'description'        => $model->product->description,
+                        'isMaster'           => $model->product->isMaster,
+                    ];
+                },
+                'sku',
+                'name',
+                'isShelfLife',
+                'duration',
+                'inboundLimit',
+                'outboundLimit',
+                'minOrder',
+                'productDescription',
+                'description',
+                'defaultPrice',
+                'length',
+                'width',
+                'height',
+                'weight',
+                'barcode',
+                'isPreOrder',
+                'minPreOrderDay',
+                'discount',
+                'isWholesale',
+                'isFreeReturn',
+                'isMustInsurance',
+                'status'
+            ]
+        ]);
+
+        return $response;
     }
 
     public function verbs()

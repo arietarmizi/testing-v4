@@ -10,6 +10,7 @@ use common\base\ActiveRecord;
  * @package common\models
  *
  * @property $id
+ * @property $marketplaceShopId
  * @property $marketplaceId
  * @property $fsId
  * @property $userId
@@ -40,15 +41,12 @@ class Shop extends ActiveRecord
 
     public function getMarketplace()
     {
-        return $this->hasOne(Shop::class, ['id' => 'marketplaceId']);
+        return $this->hasOne(Marketplace::class, ['id' => 'marketplaceId']);
     }
 
-    public function behaviors()
+    public function getUser()
     {
-        $behaviors = parent::behaviors();
-
-        unset($behaviors['uuid']);
-
-        return $behaviors;
+        return $this->hasOne(User::class, ['id' => 'userId']);
     }
+
 }

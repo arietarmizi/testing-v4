@@ -94,4 +94,9 @@ class ProductVariant extends ActiveRecord
         return '{{%product_variant}}';
     }
 
+    public function getProduct()
+    {
+        return $this->hasOne(Product::class, ['id' => 'productId']);
+    }
+
 }

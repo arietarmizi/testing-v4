@@ -63,4 +63,9 @@ class Marketplace extends ActiveRecord
 
         $this->code = 'MKP' . date('Ymd') . substr((100000 + ($code + 1)), 1);
     }
+
+//    public function getMasterStatus()
+//    {
+//        return $this->hasOne(MasterStatus::class, ['id' => 'marketplaceId']);
+//    }
 }

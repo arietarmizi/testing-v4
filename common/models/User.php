@@ -258,4 +258,10 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
         $this->allowance_updated_at = $timestamp;
         $this->save();
     }
+
+    public function getShop()
+    {
+        return $this->hasMany(Shop::class, ['userId' => 'id']);
+    }
+
 }

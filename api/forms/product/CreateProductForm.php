@@ -32,7 +32,7 @@ class CreateProductForm extends BaseForm
     public function rules()
     {
         return [
-            [['id', 'shopId', 'name'], 'required'],
+            [['shopId', 'name'], 'required'],
             [['name', 'description', 'condition', 'productDescription'], 'string'],
             [['id', 'shopId', 'productSubCategoryId', 'minOrder', 'isMaster'], 'number'],
             ['id', 'validateProduct']
@@ -48,7 +48,6 @@ class CreateProductForm extends BaseForm
     {
         $transaction                   = \Yii::$app->db->beginTransaction();
         $product                       = new Product();
-        $product->id                   = $this->id;
         $product->shopId               = $this->shopId;
         $product->productSubCategoryId = $this->productSubCategoryId;
         $product->name                 = $this->name;

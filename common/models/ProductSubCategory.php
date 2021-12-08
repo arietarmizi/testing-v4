@@ -41,4 +41,9 @@ class ProductSubCategory extends ActiveRecord
         unset($behaviors['uuid']);
         return $behaviors;
     }
+
+    public function getProductCategory()
+    {
+        return $this->hasOne(ProductCategory::class, ['productCategoryId' => 'id']);
+    }
 }

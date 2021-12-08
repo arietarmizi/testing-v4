@@ -41,7 +41,13 @@ class Subscription extends ActiveRecord
 
     public function getSubscriptionType()
     {
-        return $this->hasOne(Subscription::class, ['id' => 'subscriptionTypeId']);
+//        return $this->hasOne(Subscription::class, ['id' => 'subscriptionTypeId']);
+        return $this->hasOne(SubscriptionType::class, ['id' => 'subscriptionTypeId']);
+    }
+
+    public function getUser()
+    {
+        return $this->hasOne(User::class, ['id' => 'userId']);
     }
 
     public function countSubscription()

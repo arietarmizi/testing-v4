@@ -18,6 +18,7 @@ class m211126_005824_create_master_status_table extends Migration
             'marketplaceId' => $this->string(36),
             'statusCode'    => $this->string(100),
             'desc'          => $this->text(),
+            'status'        => $this->string(50)->defaultValue(MasterStatus::STATUS_ACTIVE),
             'createdAt'     => $this->dateTime(),
             'updatedAt'     => $this->dateTime(),
         ], $this->tableOptions);
