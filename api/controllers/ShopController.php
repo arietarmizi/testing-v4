@@ -2,6 +2,7 @@
 
 namespace api\controllers;
 
+use api\actions\ListAction;
 use api\components\Controller;
 use api\components\FormAction;
 use api\components\Response;
@@ -40,55 +41,53 @@ class ShopController extends Controller
                 'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
                 'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
             ],
+            'list' => [
+                'class' => ListAction::class,
+                'query' => function() {
+                    return Shop::find()
+                        ->joinWith(['marketplace', 'user']);
+                },
+                'toArrayProperties' => [
+                    Shop::class => [
+                        'id',
+                        'fsId',
+                        'marketplaceShopId',
+                        'marketplace' => function ($model) {
+                            /** @var Shop $model */
+                            return [
+                                'id'   => $model->marketplace->id,
+                                'code' => $model->marketplace->code,
+                                'name' => $model->marketplace->marketplaceName,
+                            ];
+                        },
+                        'user'        => function ($model) {
+                            /** @var User $model */
+                            return [
+                                'id'          => $model->user->id,
+                                'name'        => $model->user->name,
+                                'phoneNumber' => $model->user->phoneNumber,
+                                'email'       => $model->user->email,
+                                'birthDate'   => $model->user->birthDate,
+                                'address'     => $model->user->address,
+                                'status'      => $model->user->status,
+                            ];
+                        },
+                        'shopName',
+                        'shopLogo',
+                        'shopUrl',
+                        'description',
+                        'domain',
+                        'isOpen',
+                        'status'
+                    ]
+                ],
+                'apiCodeSuccess'    => 0,
+                'apiCodeFailed'     => 400,
+                'successMessage'    => \Yii::t('app', 'Get product variant list success'),
+            ]
         ];
     }
 
-    public function actionList()
-    {
-        $shop              = Shop::find()
-            ->joinWith(['marketplace', 'user'])
-            ->all();
-        $response          = new Response();
-        $response->status  = 200;
-        $response->name    = 'Get Product Category Data.';
-        $response->code    = ApiCode::DEFAULT_SUCCESS_CODE;
-        $response->message = \Yii::t('app', 'Get Product Category Data Success.');
-        $response->data    = ArrayHelper::toArray($shop, [
-            Shop::class => [
-                'id',
-                'fsId',
-                'marketplaceShopId',
-                'marketplace' => function ($model) {
-                    /** @var Shop $model */
-                    return [
-                        'id'   => $model->marketplace->id,
-                        'code' => $model->marketplace->code,
-                        'name' => $model->marketplace->marketplaceName,
-                    ];
-                },
-                'user'        => function ($model) {
-                    /** @var User $model */
-                    return [
-                        'id'          => $model->user->id,
-                        'name'        => $model->user->name,
-                        'phoneNumber' => $model->user->phoneNumber,
-                        'email'       => $model->user->email,
-                        'birthDate'   => $model->user->birthDate,
-                        'address'     => $model->user->address,
-                        'status'      => $model->user->status,
-                    ];
-                },
-                'shopName',
-                'shopLogo',
-                'shopUrl',
-                'description',
-                'domain',
-                'isOpen',
-                'status'
-            ]
-        ]);
-        return $response;
-    }
 
     protected function verbs()
     {

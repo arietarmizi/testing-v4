@@ -53,33 +53,28 @@ class MasterStatusController extends Controller
                 'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
                 'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE
             ],
-        ];
-    }
-
-    public function actionList()
-    {
-        $masterStatus = MasterStatus::find()
-            ->joinWith(['marketplace'])
-            ->all();
-
-        $response          = new Response();
-        $response->status  = 200;
-        $response->name    = 'Get Master Status Data';
-        $response->code    = ApiCode::DEFAULT_SUCCESS_CODE;
-        $response->message = \Yii::t('app', 'Get Master Status Success.');
-        $response->data    = ArrayHelper::toArray($masterStatus, [
-            MasterStatus::class => [
-                'id',
-                'marketplace' => function ($model) {
-                    /** @var MasterStatus $model */
-                    return ['id' => $model->marketplaceId, 'name' => $model->marketplace->marketplaceName];
+            'list'   => [
+                'class' => ListAction::class,
+                'query' => function () {
+                    return MasterStatus::find()
+                        ->joinWith(['marketplace']);
                 },
-                'statusCode',
-                'desc'
+                'toArrayProperties' => [
+                    MasterStatus::class => [
+                        'id',
+                        'marketplace' => function ($model) {
+                            /** @var MasterStatus $model */
+                            return ['id' => $model->marketplaceId, 'name' => $model->marketplace->marketplaceName];
+                        },
+                        'statusCode',
+                        'desc'
+                    ]
+                ],
+                'apiCodeSuccess'    => 0,
+                'apiCodeFailed'     => 400,
+                'successMessage'    => \Yii::t('app', 'Get master status list success'),
             ]
-        ]);
-
-        return $response;
+        ];
     }
 
     public function actionDelete($id)

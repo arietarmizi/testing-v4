@@ -7,6 +7,7 @@ use api\components\Response;
 use common\encryption\Tokopedia;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
+use yii\web\NotFoundHttpException;
 
 class SiteController extends Controller
 {

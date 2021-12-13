@@ -5,9 +5,10 @@ namespace api\forms\product;
 
 
 use api\components\BaseForm;
+use api\components\HttpException;
 use common\models\Product;
 
-class CreateProductForm extends BaseForm
+class UpdateProductForm extends BaseForm
 {
     public $id;
     public $shopId;
@@ -24,11 +25,6 @@ class CreateProductForm extends BaseForm
     /** @var Product */
     protected $_product;
 
-    public function init()
-    {
-        parent::init();
-    }
-
     public function rules()
     {
         return [
@@ -41,13 +37,15 @@ class CreateProductForm extends BaseForm
 
     public function submit()
     {
-        return $this->_createProduct();
-    }
+        $findId = \Yii::$app->request->get('id');
 
-    protected function _createProduct()
-    {
-        $transaction                   = \Yii::$app->db->beginTransaction();
-        $product                       = new Product();
+        $query = Product::find()
+            ->where(['id' => $findId])
+            ->one();
+        if (!$query) {
+            throw new HttpException(400, \Yii::t('app', 'Product ID Not Found.'));
+        }
+
         $product->shopId               = $this->shopId;
         $product->productSubCategoryId = $this->productSubCategoryId;
         $product->name                 = $this->name;
@@ -56,39 +54,22 @@ class CreateProductForm extends BaseForm
         $product->productDescription   = $this->productDescription;
         $product->description          = $this->description;
         $product->isMaster             = $this->isMaster;
-        $product->save();
-        if ($product->save()) {
-            $product->refresh();
-            $this->_product = $product;
-            $transaction->commit();
-            return true;
-        } else {
-            $this->addErrors($this->getErrors());
-            $transaction->rollBack();
-            return false;
-        }
-    }
 
-    public function validateProduct($attribute, $params, $validator)
-    {
-        $product = Product::find()
-            ->where(['id' => $this->id])
-            ->one();
-        if ($product) {
-            $this->addError($attribute, 'id' . $this->id . 'has been created.');
-        }
+        $success = true;
+
+        if ($query->save())
+            if ($query->hasErrors()) {
+                $this->addError($query->errors);
+                throw new HttpException(400, \Yii::t('app', 'Update Product Failed.'));
+            } else {
+                $success &= $query->save();
+            }
+        return $success;
     }
 
     public function response()
     {
-        $response = $this->_product->toArray();
-
-        unset($response['createdAt']);
-        unset($response['updatedAt']);
-        unset($response['code']);
-        unset($response['minOrder']);
-        unset($response['productDescription']);
-
-        return ['product' => $response];
+        return [];
     }
+
 }

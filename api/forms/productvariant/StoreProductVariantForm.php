@@ -3,6 +3,7 @@
 namespace api\forms\productvariant;
 
 use api\components\BaseForm;
+use common\models\Product;
 use common\models\ProductVariant;
 
 class StoreProductVariantForm extends BaseForm
@@ -59,9 +60,22 @@ class StoreProductVariantForm extends BaseForm
                 'isWholesale',
                 'isFreeReturn',
                 'isMustInsurance'
-            ], 'boolean']
+            ], 'boolean'],
+            ['productId', 'validateProductId']
         ];
     }
+
+    public function validateProductId($attributes, $params)
+    {
+        $product = Product::find()
+            ->where(['id' => $this->productId, 'status' => Product::STATUS_ACTIVE])
+            ->one();
+        if (!$product) {
+            $this->addError($attributes, \Yii::t('app', 'Product ID ' . $this->productId . ' not found'));
+        }
+
+    }
+
 
     public function submit()
     {

@@ -4,6 +4,7 @@
 namespace api\controllers;
 
 
+use api\actions\ListAction;
 use api\components\Controller;
 use api\components\Response;
 use api\config\ApiCode;
@@ -29,34 +30,35 @@ class AccountController extends Controller
         return $behaviors;
     }
 
-    public function actionProfile()
+    public function actions()
     {
-        $user = User::find()
-//            ->leftJoin(User::tableName(), User::tableName() . '.id = ' . Shop::tableName() . '.userId')
-            ->where([User::tableName() . '.id' => \Yii::$app->user->id])
-            ->joinWith(['shop'])
-            ->one();
-
-        $response          = new Response();
-        $response->status  = 200;
-        $response->name    = 'Get Product Category Data.';
-        $response->code    = ApiCode::DEFAULT_SUCCESS_CODE;
-        $response->message = \Yii::t('app', 'Get Product Category Data Success.');
-        $response->data    = ArrayHelper::toArray($user, [
-            User::class => [
-                'id',
-                'name',
-                'status',
-                'shop' => function ($model) {
-                    /** @var User $model */
-                    return [
-                        $model->getShop()->all(),
-//                        'name' => $model->shop->shopName,
-                    ];
+        return [
+            'profile' => [
+                'class'             => ListAction::class,
+                'query'             => function () {
+                    return User::find()
+                        ->where([User::tableName() . '.id' => \Yii::$app->user->id])
+                        ->joinWith(['shop']);
                 },
+                'toArrayProperties' => [
+                    User::class => [
+                        'id',
+                        'name',
+                        'status',
+                        'shop' => function ($model) {
+                            /** @var User $model */
+                            return [
+                                $model->getShop()->all(),
+//                        'name' => $model->shop->shopName,
+                            ];
+                        },
+                    ]
+                ],
+                'apiCodeSuccess'    => 0,
+                'apiCodeFailed'     => 400,
+                'successMessage'    => \Yii::t('app', 'Get user profile success'),
             ]
-        ]);
-        return $response;
+        ];
     }
 
     protected function verbs()

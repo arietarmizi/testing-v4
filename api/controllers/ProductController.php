@@ -43,6 +43,16 @@ class ProductController extends Controller
                 'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
                 'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
             ],
+            [
+              'update' => [
+                  'class'          => FormAction::className(),
+                  'formClass'      => CreateProductForm::className(),
+                  'messageSuccess' => \Yii::t('app', 'Create Product Success.'),
+                  'messageFailed'  => \Yii::t('app', 'Create Product Failed.'),
+                  'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
+                  'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
+              ]
+            ],
             'list'      => [
                 'class'             => ListAction::class,
                 'query'             => function () {
