@@ -32,7 +32,7 @@ return [
     'product/add-image' => 'product/add-image',
 
     'product-variant/store' => 'product-variant/store',
-    'product-variant/list2'  => 'product-variant/list2',
+    'product-variant/list'  => 'product-variant/list',
 
     'product-bundle/store' => 'product-bundle/store',
     'product-bundle/list'  => 'product-bundle/list',

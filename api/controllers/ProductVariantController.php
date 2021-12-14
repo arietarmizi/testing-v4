@@ -45,7 +45,7 @@ class ProductVariantController extends Controller
                 'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
                 'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
             ],
-            'list2' => [
+            'list' => [
                 'class'             => ListAction::class,
                 'query'             => function () {
                     return ProductVariant::find()
