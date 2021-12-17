@@ -13,11 +13,10 @@ return [
     'auth/register' => 'auth/register',
     'auth/login'    => 'auth/login',
 
-    'account/profile' => 'account/profile',
-
-
+    'account/profile'                       => 'account/profile',
+//    ''                                 => 'site/index',
     'dummy'                                 => 'dummy',
-
+//    'tokopedia/shop/showcase'          => 'tokopedia/shop/showcase',
 
 //    TOKOPEDIA PRODUCTS
     'product/get-all'                       => 'product/get-all',
