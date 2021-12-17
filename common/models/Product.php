@@ -35,6 +35,7 @@ class Product extends ActiveRecord
     const STATUS_ACTIVE       = 'Active';
     const STATUS_INACTIVE     = 'Inactive';
     const STATUS_OUT_OF_STOCK = 'out of stock';
+    const STATUS_DELETED      = 'deleted';
 
     const CONDITION_NEW    = 'new';
     const CONDITION_SECOND = 'second';
@@ -49,7 +50,8 @@ class Product extends ActiveRecord
         return [
             self::STATUS_ACTIVE       => \Yii::t('app', 'Active'),
             self::STATUS_INACTIVE     => \Yii::t('app', 'Inactive'),
-            self::STATUS_OUT_OF_STOCK => \Yii::t('app', 'Out Of Stock')
+            self::STATUS_OUT_OF_STOCK => \Yii::t('app', 'Out Of Stock'),
+            self::STATUS_DELETED      => \Yii::t('app', 'Deleted')
         ];
     }
 
@@ -64,6 +66,21 @@ class Product extends ActiveRecord
     public function getCategory()
     {
         return $this->hasMany(Product::class, ['categoryId' => 'id']);
+    }
+
+    public function getShop()
+    {
+        return $this->hasOne(Shop::class, ['marketplaceShopId' => 'shopId']);
+    }
+
+    public function getProductImages()
+    {
+        return $this->hasMany(ProductImages::class, ['productId' => 'id']);
+    }
+
+    public function getProductSubCategory()
+    {
+        return $this->hasOne(ProductSubCategory::class, ['id' => 'productSubCategoryId']);
     }
 
 

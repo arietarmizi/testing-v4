@@ -41,7 +41,7 @@ class AddProductImagesForm extends BaseForm
         $transaction = $db->beginTransaction();
         $success     = true;
         $fileManager = \Yii::$app->fileManager;
-        $folder      = 'product/' . ArrayHelper::getValue(ProductImages::imageFolders(), $this->type);
+        $folder      = 'product/' . ArrayHelper::getValue(ProductImages::imageFolders(), 'image');
         if ($this->validate()) {
             $fileInstances = UploadedFile::getInstancesByName('imageFiles');
             if ($fileInstances) {

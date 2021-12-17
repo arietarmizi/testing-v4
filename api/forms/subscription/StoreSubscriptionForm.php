@@ -15,11 +15,6 @@ class StoreSubscriptionForm extends BaseForm
 
     private $_subscriptionType;
 
-    public function init()
-    {
-        parent::init();
-    }
-
     public function rules()
     {
         return [

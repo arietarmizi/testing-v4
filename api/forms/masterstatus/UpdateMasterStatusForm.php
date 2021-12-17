@@ -64,6 +64,7 @@ class UpdateMasterStatusForm extends BaseForm
         $query->marketplaceId = $this->marketplaceId;
         $query->statusCode    = $this->statusCode;
         $query->desc          = $this->desc;
+        $query->status        = $this->status ? $this->status : MasterStatus::statuses();
 
         $success = true;
 

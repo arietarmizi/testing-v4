@@ -3,9 +3,11 @@
 namespace api\forms\productdiscount;
 
 use api\components\BaseForm;
+use api\components\HttpException;
 use Carbon\Carbon;
 use common\models\ProductDiscount;
 use common\models\ProductPromo;
+use common\models\ProductVariant;
 
 class StoreProductDiscountForm extends BaseForm
 {
@@ -30,7 +32,20 @@ class StoreProductDiscountForm extends BaseForm
             [['productVariantId', 'slashPriceStatusId'], 'string'],
             [['discountPrice', 'discountPercentage', 'initialQuota', 'remainingQuota', 'maxOrder'], 'double'],
             ['useWarehouse', 'boolean'],
+            ['productVariantId', 'validateProductVariant']
         ];
+    }
+
+    public function validateProductVariant()
+    {
+        $query = ProductVariant::find()
+            ->where(['id' => $this->productVariantId])
+            ->andWhere(['status' => ProductVariant::STATUS_ACTIVE])
+            ->one();
+
+        if (!$query) {
+            throw new HttpException(400, \Yii::t('app', 'Product Variant Not Found.'));
+        }
     }
 
     public function submit()

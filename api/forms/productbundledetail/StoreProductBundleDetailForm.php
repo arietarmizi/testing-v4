@@ -3,7 +3,9 @@
 namespace api\forms\productbundledetail;
 
 use api\components\BaseForm;
+use common\models\ProductBundle;
 use common\models\ProductBundleDetail;
+use common\models\ProductVariant;
 
 class StoreProductBundleDetailForm extends BaseForm
 {
@@ -18,13 +20,31 @@ class StoreProductBundleDetailForm extends BaseForm
         return [
             [['productBundleId', 'productVariantId', 'quantity'], 'required'],
             ['quantity', 'double'],
+            ['productVariantId', 'validateProductVariant'],
+            ['productBundleId', 'validateProductBundle']
         ];
+    }
+
+    public function validateProductBundle($attribute, $params)
+    {
+        $query = ProductBundle::find()
+            ->where(['id' => $this->productBundleId])
+            ->andWhere(['status' => ProductBundle::STATUS_ACTIVE])
+            ->one();
+
+        if (!$query) {
+            $this->addError($attribute, \Yii::t('app', '{attribute} "{value}" Not Found.!', [
+                'attribute' => $attribute,
+                'value'     => $this->productBundleId
+            ]));
+        }
     }
 
     public function validateProductVariant($attribute, $params)
     {
-        $query = ProductBundleDetail::find()
-            ->where(['productVariantId' => $this->productVariantId])
+        $query = ProductVariant::find()
+            ->where(['id' => $this->productVariantId])
+            ->andWhere(['status' => ProductVariant::STATUS_ACTIVE])
             ->one();
         if (!$query) {
             $this->addError($attribute, \Yii::t('app', '{attribute} "{value}" is inactive.', [

@@ -43,15 +43,29 @@ class AccountController extends Controller
                 'toArrayProperties' => [
                     User::class => [
                         'id',
+                        'identityCardNumber',
                         'name',
+                        'phoneNumber',
+                        'email',
+                        'birthDate',
+                        'address',
+                        'type',
                         'status',
+//                        'marketplaceShopId' => function ($model) {
+//                            /** @var User $model */
+//                            return
+//                                $model->shop->marketplaceShopId;
+//                        },
                         'shop' => function ($model) {
-                            /** @var User $model */
-                            return [
-                                $model->getShop()->all(),
-//                        'name' => $model->shop->shopName,
-                            ];
-                        },
+                            return ArrayHelper::toArray($model->shop, [
+                                Shop::class => [
+                                    'marketplaceShopId',
+                                    'shopName',
+                                    'description',
+                                    'isOpen'
+                                ]
+                            ]);
+                        }
                     ]
                 ],
                 'apiCodeSuccess'    => 0,

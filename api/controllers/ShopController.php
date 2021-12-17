@@ -9,10 +9,12 @@ use api\components\Response;
 use api\config\ApiCode;
 use api\filters\ContentTypeFilter;
 use api\forms\shop\StoreShopForm;
+use api\forms\shop\UpdateShopForm;
 use api\forms\tokopedia\ShopShowCaseForm;
 use common\models\Shop;
 use common\models\User;
 use yii\helpers\ArrayHelper;
+use yii\web\NotFoundHttpException;
 
 class ShopController extends Controller
 {
@@ -24,7 +26,8 @@ class ShopController extends Controller
             'class'       => ContentTypeFilter::class,
             'contentType' => ContentTypeFilter::TYPE_APPLICATION_JSON,
             'only'        => [
-                'store'
+                'store',
+                'update'
             ],
         ];
         return $behaviors;
@@ -33,7 +36,7 @@ class ShopController extends Controller
     public function actions()
     {
         return [
-            'store' => [
+            'store'  => [
                 'class'          => FormAction::className(),
                 'formClass'      => StoreShopForm::className(),
                 'messageSuccess' => \Yii::t('app', 'Store Shop Success.'),
@@ -41,9 +44,17 @@ class ShopController extends Controller
                 'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
                 'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
             ],
-            'list' => [
-                'class' => ListAction::class,
-                'query' => function() {
+            'update' => [
+                'class'          => FormAction::className(),
+                'formClass'      => UpdateShopForm::className(),
+                'messageSuccess' => \Yii::t('app', 'Update Shop Success.'),
+                'messageFailed'  => \Yii::t('app', 'Update Shop Failed.'),
+                'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
+                'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
+            ],
+            'list'   => [
+                'class'             => ListAction::class,
+                'query'             => function () {
                     return Shop::find()
                         ->joinWith(['marketplace', 'user']);
                 },
@@ -88,11 +99,33 @@ class ShopController extends Controller
         ];
     }
 
+    public function actionDelete($id)
+    {
+        $shop = Shop::find()
+            ->where(['id' => $id])
+            ->one();
+        if ($shop){
+            $shop->status = Shop::STATUS_DELETED;
+            $shop->save();
+
+            $response          = new Response();
+            $response->name    = \Yii::t('app', 'Delete Shop Success.');
+            $response->code    = ApiCode::DEFAULT_SUCCESS_CODE;
+            $response->message = \Yii::t('app', 'Delete Shop Success.');
+            $response->status  = 200;
+            $response->data    = [];
+            return $response;
+        }
+        throw new NotFoundHttpException(\Yii::t('app', 'Shop ID Not Found!'), 400);
+    }
 
     protected function verbs()
     {
         return [
-            'store' => ['post'],
+            'store'  => ['post'],
+            'update' => ['post'],
+            'delete' => ['post'],
+            'list'   => ['get']
         ];
     }
 }

@@ -52,6 +52,7 @@ class ProductVariant extends ActiveRecord
 {
     const STATUS_ACTIVE   = 1;
     const STATUS_INACTIVE = 0;
+    const STATUS_DELETED  = 2;
 
     const CONDITION_NEW    = 1;
     const CONDITION_SECOND = 0;
@@ -94,9 +95,19 @@ class ProductVariant extends ActiveRecord
         return '{{%product_variant}}';
     }
 
+    public function isActive()
+    {
+        return $this->status == self::STATUS_ACTIVE;
+    }
+
     public function getProduct()
     {
         return $this->hasOne(Product::class, ['id' => 'productId']);
+    }
+
+    public function getProductImages()
+    {
+
     }
 
 }

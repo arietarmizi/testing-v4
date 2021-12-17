@@ -28,6 +28,7 @@ class ProductDiscount extends ActiveRecord
 {
     const STATUS_ACTIVE   = 'active';
     const STATUS_INACTIVE = 'inactive';
+    const STATUS_DELETED  = 'deleted';
 
     public static function statuses()
     {
@@ -40,5 +41,10 @@ class ProductDiscount extends ActiveRecord
     public static function tableName()
     {
         return '{{%product_discount}}';
+    }
+
+    public function getProductVariant()
+    {
+        return $this->hasOne(ProductVariant::class, ['id' => 'productVariantId']);
     }
 }

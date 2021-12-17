@@ -47,9 +47,16 @@ class ProductImages extends ActiveRecord
     public static function statuses()
     {
         return [
-            self::STATUS_ACTIVE   => Yii::t('app', 'Active'),
-            self::STATUS_INACTIVE => Yii::t('app', 'Inactive'),
-            self::STATUS_DELETED  => Yii::t('app', 'Deleted'),
+            self::STATUS_ACTIVE   => \Yii::t('app', 'Active'),
+            self::STATUS_INACTIVE => \Yii::t('app', 'Inactive'),
+            self::STATUS_DELETED  => \Yii::t('app', 'Deleted'),
+        ];
+    }
+
+    public function types()
+    {
+        return [
+            self::TYPE_PRODUCT_IMAGE => \Yii::t('app', 'Product Images'),
         ];
     }
 
@@ -77,7 +84,7 @@ class ProductImages extends ActiveRecord
     public function getImageUrl()
     {
 //        $apiBaseUrl = ArrayHelper::getValue('api.baseUrl', Yii::$app->urlManager->baseUrl);
-        $apiBaseUrl = ArrayHelper::getValue(Yii::$app->params, 'api.baseUrl', Yii::$app->urlManager->baseUrl);
+        $apiBaseUrl = ArrayHelper::getValue(\Yii::$app->params, 'api.baseUrl', \Yii::$app->urlManager->baseUrl);
         return $this->file->getThumbnailSource($apiBaseUrl) ? $this->file->getThumbnailSource($apiBaseUrl) : null;
     }
 

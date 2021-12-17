@@ -22,6 +22,7 @@ class ProductPromo extends ActiveRecord
 {
     const STATUS_ACTIVE   = 'active';
     const STATUS_INACTIVE = 'inactive';
+    const STATUS_DELETED  = 'deleted';
 
     public static function statuses()
     {

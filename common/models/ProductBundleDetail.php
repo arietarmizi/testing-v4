@@ -14,6 +14,7 @@ use common\base\ActiveRecord;
  * @property string $productBundleId
  * @property string $productVariantId
  * @property double $quantity
+ * @property string $status
  * @property string $createdAt
  * @property string $updatedAt
  */
@@ -21,6 +22,7 @@ class ProductBundleDetail extends ActiveRecord
 {
     const STATUS_ACTIVE   = 'active';
     const STATUS_INACTIVE = 'inactive';
+    consT STATUS_DELETED  = 'deleted';
 
     public static function statuses()
     {
@@ -33,6 +35,16 @@ class ProductBundleDetail extends ActiveRecord
     public static function tableName()
     {
         return '{{%product_bundle_detail}}';
+    }
+
+    public function getProductBundle()
+    {
+        return $this->hasOne(ProductBundle::class, ['id' => 'productBundleId']);
+    }
+
+    public function getProductVariant()
+    {
+        return $this->hasMany(ProductVariant::class, ['id' => 'productVariantId']);
     }
 
 }

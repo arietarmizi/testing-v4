@@ -42,6 +42,14 @@ class SubscriptionController extends Controller
                 'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
                 'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
             ],
+            'update' => [
+                'class'          => FormAction::class,
+                'formClass'      => StoreSubscriptionForm::class,
+                'messageSuccess' => \Yii::t('app', 'Store Subscription Success.'),
+                'messageFailed'  => \Yii::t('app', 'Store Subscription Failed.'),
+                'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
+                'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
+            ],
             'list'  => [
                 'class' => ListAction::class,
                 'query' => function () {

@@ -28,12 +28,27 @@ class UpdateProductForm extends BaseForm
     public function rules()
     {
         return [
-            [['shopId', 'name'], 'required'],
+            [['name'], 'required'],
             [['name', 'description', 'condition', 'productDescription'], 'string'],
             [['id', 'shopId', 'productSubCategoryId', 'minOrder', 'isMaster'], 'number'],
-            ['id', 'validateProduct']
+            ['id', 'validateProduct'],
+            ['status', 'in', 'range' => array_keys(Product::statuses())]
         ];
     }
+
+    public function validateProduct()
+    {
+        $productId = \Yii::$app->request->get('id');
+
+        $product = Product::find()
+            ->where(['id' => $productId])
+            ->andWhere(['status' => Product::STATUS_ACTIVE])
+            ->one();
+        if (!$productId) {
+            throw new HttpException(400, \Yii::t('app', 'Product ID not Found.'));
+        }
+    }
+
 
     public function submit()
     {
@@ -46,14 +61,14 @@ class UpdateProductForm extends BaseForm
             throw new HttpException(400, \Yii::t('app', 'Product ID Not Found.'));
         }
 
-        $product->shopId               = $this->shopId;
-        $product->productSubCategoryId = $this->productSubCategoryId;
-        $product->name                 = $this->name;
-        $product->condition            = $this->condition;
-        $product->minOrder             = $this->minOrder;
-        $product->productDescription   = $this->productDescription;
-        $product->description          = $this->description;
-        $product->isMaster             = $this->isMaster;
+        $query->productSubCategoryId = $this->productSubCategoryId;
+        $query->name                 = $this->name;
+        $query->condition            = $this->condition;
+        $query->minOrder             = $this->minOrder;
+        $query->productDescription   = $this->productDescription;
+        $query->description          = $this->description;
+        $query->isMaster             = $this->isMaster;
+        $query->status               = $this->status ? $this->status : Product::statuses();
 
         $success = true;
 

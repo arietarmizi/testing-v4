@@ -7,10 +7,13 @@ namespace api\controllers;
 use api\actions\ListAction;
 use api\components\Controller;
 use api\components\FormAction;
+use api\components\Response;
 use api\config\ApiCode;
 use api\filters\ContentTypeFilter;
 use api\forms\productpromo\StoreProductPromoForm;
+use api\forms\productpromo\UpdateProductPromoForm;
 use common\models\ProductPromo;
+use yii\web\NotFoundHttpException;
 
 class ProductPromoController extends Controller
 {
@@ -23,7 +26,7 @@ class ProductPromoController extends Controller
             'contentType' => ContentTypeFilter::TYPE_APPLICATION_JSON,
             'only'        => [
                 'store',
-                'list'
+                'update',
             ]
         ];
         return $behaviors;
@@ -32,7 +35,7 @@ class ProductPromoController extends Controller
     public function actions()
     {
         return [
-            'store' => [
+            'store'  => [
                 'class'          => FormAction::className(),
                 'formClass'      => StoreProductPromoForm::className(),
                 'messageSuccess' => \Yii::t('app', 'Create Product Promo Success.'),
@@ -40,7 +43,15 @@ class ProductPromoController extends Controller
                 'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
                 'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
             ],
-            'list'  => [
+            'update' => [
+                'class'          => FormAction::className(),
+                'formClass'      => UpdateProductPromoForm::className(),
+                'messageSuccess' => \Yii::t('app', 'Update Product Promo Success.'),
+                'messageFailed'  => \Yii::t('app', 'Update Product Promo Failed.'),
+                'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
+                'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
+            ],
+            'list'   => [
                 'class'             => ListAction::class,
                 'query'             => function () {
                     return ProductPromo::find()
@@ -62,11 +73,35 @@ class ProductPromoController extends Controller
         ];
     }
 
+
+    public function actionDelete($id)
+    {
+        $query = ProductPromo::find()
+            ->where(['id' => $id])
+            ->one();
+
+        if ($query) {
+            $query->status = ProductPromo::STATUS_DELETED;
+            $query->save();
+
+            $response          = new Response();
+            $response->name    = \Yii::t('app', 'Delete Product Promo Success.');
+            $response->code    = ApiCode::DEFAULT_SUCCESS_CODE;
+            $response->message = \Yii::t('app', 'Delete Product Promo Success.');
+            $response->status  = 200;
+            $response->data    = [];
+            return $response;
+        }
+        throw new NotFoundHttpException(\Yii::t('app', 'Product Promo ID Not Found!'), 400);
+    }
+
     public function verbs()
     {
         return [
-            'store' => ['post'],
-            'list'  => ['get']
+            'store'  => ['post'],
+            'update' => ['post'],
+            'delete' => ['post'],
+            'list'   => ['get']
         ];
     }
 }

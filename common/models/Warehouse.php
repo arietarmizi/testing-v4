@@ -11,18 +11,29 @@ use common\base\ActiveRecord;
  * @package common\models
  *
  * @property string $id
- * @property string $districtId
+ * @property string $shopId
  * @property string $name
  * @property string $address
  * @property string $type
- * @property string $status
  * @property string $createdAt
  * @property string $updatedAt
+ * @property string $description
+ * @property string $subDistrictId
+ * @property string $email
+ * @property float  $phoneNumber
+ * @property string $whType
+ * @property string $isDefault
+ * @property string $latLon
+ * @property string $latitude
+ * @property string $longitude
+ * @property string $branchShopSubscription
+ * @property string $status
  */
 class Warehouse extends ActiveRecord
 {
     const STATUS_ACTIVE   = 'active';
     const STATUS_INACTIVE = 'inactive';
+    const STATUS_DELETED  = 'deleted';
 
     const WAREHOUSE = 'warehouse';
     const STORE     = 'store';
@@ -46,5 +57,10 @@ class Warehouse extends ActiveRecord
     public static function tableName()
     {
         return '{{%warehouse}}';
+    }
+
+    public function isActive()
+    {
+        return $this->status == self::STATUS_ACTIVE;
     }
 }

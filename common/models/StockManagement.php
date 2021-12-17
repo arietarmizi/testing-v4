@@ -27,6 +27,7 @@ class StockManagement extends ActiveRecord
 {
     const STATUS_ACTIVE   = 'active';
     const STATUS_INACTIVE = 'inactive';
+    const STATUS_DELETED  = 'deleted';
 
     const STOCK_IN  = 'in';
     const STOCK_OUT = 'out';
@@ -50,5 +51,20 @@ class StockManagement extends ActiveRecord
     public static function tableName()
     {
         return '{{%stock_management}}';
+    }
+
+    public function isActive()
+    {
+        return $this->status == self::STATUS_ACTIVE;
+    }
+
+    public function getProductVariant()
+    {
+        return $this->hasMany(ProductVariant::class, ['id' => 'productVariantId']);
+    }
+
+    public function getWarehouse()
+    {
+        return $this->hasMany(Warehouse::class, ['id' => 'warehouseId']);
     }
 }

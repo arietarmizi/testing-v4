@@ -261,7 +261,7 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
 
     public function getShop()
     {
-        return $this->hasMany(Shop::class, ['userId' => 'id']);
+        return $this->hasOne(Shop::class, ['userId' => 'id']);
     }
 
 }

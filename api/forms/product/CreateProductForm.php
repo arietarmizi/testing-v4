@@ -6,6 +6,7 @@ namespace api\forms\product;
 
 use api\components\BaseForm;
 use common\models\Product;
+use common\models\User;
 
 class CreateProductForm extends BaseForm
 {
@@ -32,7 +33,7 @@ class CreateProductForm extends BaseForm
     public function rules()
     {
         return [
-            [['shopId', 'name'], 'required'],
+            [['name'], 'required'],
             [['name', 'description', 'condition', 'productDescription'], 'string'],
             [['id', 'shopId', 'productSubCategoryId', 'minOrder', 'isMaster'], 'number'],
             ['id', 'validateProduct']
@@ -47,8 +48,14 @@ class CreateProductForm extends BaseForm
     protected function _createProduct()
     {
         $transaction                   = \Yii::$app->db->beginTransaction();
+
+        $user = User::find()
+            ->where([User::tableName() . '.id' => \Yii::$app->user->id])
+            ->joinWith(['shop'])
+            ->one();
+
         $product                       = new Product();
-        $product->shopId               = $this->shopId;
+        $product->shopId               = $user->shop->marketplaceShopId;
         $product->productSubCategoryId = $this->productSubCategoryId;
         $product->name                 = $this->name;
         $product->condition            = $this->condition;
@@ -75,7 +82,7 @@ class CreateProductForm extends BaseForm
             ->where(['id' => $this->id])
             ->one();
         if ($product) {
-            $this->addError($attribute, 'id' . $this->id . 'has been created.');
+            $this->addError($attribute, 'id' . $this->id . ' has been created.');
         }
     }
 

@@ -25,6 +25,18 @@ class Shop extends ActiveRecord
 {
     const STATUS_ACTIVE   = 'active';
     const STATUS_INACTIVE = 'inactive';
+    const STATUS_DELETED  = 'deleted';
+
+    const OPEN_STATUS_YES = 1;
+    const OPEN_STATUS_NO  = 0;
+
+    public static function openStatuses()
+    {
+        return [
+            self::OPEN_STATUS_YES => \Yii::t('app', 'Yes'),
+            self::OPEN_STATUS_NO  => \Yii::t('app', 'No')
+        ];
+    }
 
     public static function statuses()
     {

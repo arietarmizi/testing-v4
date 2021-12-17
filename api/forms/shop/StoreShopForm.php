@@ -3,6 +3,8 @@
 namespace api\forms\shop;
 
 use api\components\BaseForm;
+use api\components\HttpException;
+use common\models\Marketplace;
 use common\models\Shop;
 
 class StoreShopForm extends BaseForm
@@ -21,8 +23,20 @@ class StoreShopForm extends BaseForm
     {
         return [
             [['marketplaceShopId', 'fsId', 'marketplaceId', 'shopName'], 'required'],
-            [['fsId', 'userId', 'shopName', 'description'], 'string']
+            [['fsId', 'userId', 'shopName', 'description'], 'string'],
+            ['isOpen', 'in', 'range' => array_keys(Shop::openStatuses())]
         ];
+    }
+
+    public function validatemarketplace()
+    {
+        $marketplace = Marketplace::find()
+            ->where(['id' => $this->marketplaceId])
+            ->andWhere(['status' => Marketplace::STATUS_ACTIVE])
+            ->one();
+        if (!$marketplace) {
+            throw new HttpException(400, \Yii::t('app', 'Marketplace ID Not Found.'));
+        }
     }
 
     public function submit()
@@ -36,7 +50,7 @@ class StoreShopForm extends BaseForm
         $shop->userId            = $user->id;
         $shop->shopName          = $this->shopName;
         $shop->description       = $this->description;
-        $shop->isOpen            = true;
+        $shop->isOpen            = $this->isOpen ? $this->isOpen : Shop::openStatuses();
 
         $shop->save();
         $shop->refresh();
