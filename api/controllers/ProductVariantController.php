@@ -66,7 +66,7 @@ class ProductVariantController extends Controller
                 'statusSuccess'  => 200,
                 'statusFailed'   => 400,
             ],
-            'list'      => [
+            'list' => [
                 'class'             => ListAction::class,
                 'query'             => function () {
                     return ProductVariant::find()
@@ -87,14 +87,6 @@ class ProductVariantController extends Controller
                                 'isMaster'           => $model->product->isMaster,
                             ];
                         },
-//                        'productImages' => function ($model) {
-//                            return ArrayHelper::toArray($model->productImages, [
-//                                ProductImages::class => [
-//                                    'id',
-//                                    'imageUrl'
-//                                ]
-//                            ]);
-//                        },
                         'sku',
                         'name',
                         'isShelfLife',
