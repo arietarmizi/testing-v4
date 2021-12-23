@@ -79,6 +79,12 @@ class ProductController extends Controller
                         'productDescription',
                         'description',
                         'isMaster',
+												'minPrice' => function ($model) {
+        									return $model->minPrice;
+												},
+												'maxPrice' => function ($model) {
+													return $model->maxPrice;
+												},
                         'productSubCategory' => function ($model) {
                             return ArrayHelper::toArray($model->productSubCategory, [
                                 ProductSubCategory::class => [

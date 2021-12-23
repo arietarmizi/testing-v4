@@ -29,6 +29,10 @@ use common\base\ActiveRecord;
  * @property string  $status
  * @property string  $createdAt
  * @property string  $updatedAt
+ *
+ * @property ProductVariant[] $productVariants
+ * @property double $minPrice
+ * @property double $maxPrice
  */
 class Product extends ActiveRecord
 {
@@ -83,5 +87,22 @@ class Product extends ActiveRecord
         return $this->hasOne(ProductSubCategory::class, ['id' => 'productSubCategoryId']);
     }
 
+    public  function getProductVariants()
+		{
+			return $this->hasMany(ProductVariant::class, ['productId' => 'id']);
+		}
 
+		public function getMinPrice()
+		{
+			return ProductVariant::find()
+				->where([ProductVariant::tableName() . '.productId' => $this->id])
+				->min(ProductVariant::tableName() . '.defaultPrice');
+		}
+
+		public function getMaxPrice()
+		{
+			return ProductVariant::find()
+				->where([ProductVariant::tableName() . '.productId' => $this->id])
+				->max(ProductVariant::tableName() . '.defaultPrice');
+		}
 }
