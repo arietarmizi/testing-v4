@@ -21,7 +21,7 @@ use yii\helpers\ArrayHelper;
  * @property string  $updatedAt
  *
  * @property File    $file
- * @property Product $product
+ * @property ProductVariant $productVariant
  */
 class ProductImages extends ActiveRecord
 {
@@ -71,9 +71,9 @@ class ProductImages extends ActiveRecord
         return [];
     }
 
-    public function getProduct()
+    public function getProductVariant()
     {
-        return $this->hasOne(Product::class, ['id' => 'productId']);
+        return $this->hasOne(ProductVariant::class, ['id' => 'productVariantId']);
     }
 
     public function getFile()

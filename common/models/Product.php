@@ -79,7 +79,9 @@ class Product extends ActiveRecord
 
     public function getProductImages()
     {
-        return $this->hasMany(ProductImages::class, ['productId' => 'id']);
+			return ProductImages::find()
+				->joinWith('productVariant')
+				->where([ProductVariant::tableName().'.productId' => $this->id]);
     }
 
     public function getProductSubCategory()

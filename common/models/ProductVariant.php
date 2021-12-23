@@ -47,6 +47,8 @@ use common\base\ActiveRecord;
  * @property string  $status
  * @property string  $createdAt
  * @property string  $updatedAt
+ *
+ * @property ProductImages[] $productImages
  */
 class ProductVariant extends ActiveRecord
 {
@@ -107,7 +109,7 @@ class ProductVariant extends ActiveRecord
 
     public function getProductImages()
     {
-
+			return $this->hasMany(ProductImages::class, ['productVariantId' => 'id']);
     }
 
 }
