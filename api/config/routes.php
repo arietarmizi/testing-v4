@@ -19,18 +19,18 @@ return [
 //    'tokopedia/shop/showcase'          => 'tokopedia/shop/showcase',
 
 //    TOKOPEDIA PRODUCTS
-    'product/get-all'                       => 'product/get-all',
     'tokopedia/product/product-info-by-id'  => 'tokopedia/product/product-info-by-id',
-    'tokopedia/product/product-info-by-sku' => 'tokopedia/product/product-info-by-sku',
-    'tokopedia/product/get-variant'         => 'tokopedia/product/get-variant',
+	'tokopedia/product/product-info-by-sku' => 'tokopedia/product/product-info-by-sku',
+	'tokopedia/product/get-variant'         => 'tokopedia/product/get-variant',
 
-    'tokopedia/order/get-single-order' => 'tokopedia/order/get-single-order',
+	'tokopedia/order/get-single-order' => 'tokopedia/order/get-single-order',
 
-    'product/create'                           => 'product/create',
-    'product/<id:' . $uuidPattern . '>'        => 'product/update',
-    'product/delete/<id:' . $uuidPattern . '>' => 'product/delete',
-    'product/list'                             => 'product/list',
-    'product/add-image'                        => 'product/add-image',
+	'product/create'                           => 'product/create',
+	'product/<id:' . $uuidPattern . '>'        => 'product/update',
+	'product/delete/<id:' . $uuidPattern . '>' => 'product/delete',
+	'product/list'                             => 'product/list',
+	'product/add-image'                        => 'product/add-image',
+	'product/download'                       => 'product/download',
 
     'product-variant/store'                            => 'product-variant/store',
     'product-variant/<id:' . $uuidPattern . '>'        => 'product-variant/update',

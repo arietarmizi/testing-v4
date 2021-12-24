@@ -13,7 +13,8 @@ use api\filters\ContentTypeFilter;
 use api\forms\product\AddProductImagesForm;
 use api\forms\product\CreateProductForm;
 use api\forms\product\UpdateProductForm;
-use api\forms\tokopedia\product\GetAllProductsForm;
+use api\forms\tokopedia\product\DownloadProductsForm;
+//use api\forms\tokopedia\product\GetAllProductsForm;
 use api\forms\tokopedia\product\GetInfoByIdForm;
 use api\forms\tokopedia\product\GetInfoBySkuForm;
 use api\forms\tokopedia\product\GetProductVariantForm;
@@ -34,6 +35,7 @@ class ProductController extends Controller
             'only'        => [
                 'create',
                 'update',
+								'download'
             ]
         ];
         return $behaviors;
@@ -117,7 +119,15 @@ class ProductController extends Controller
                 'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
                 'statusSuccess'  => 200,
                 'statusFailed'   => 400,
-            ]
+            ],
+						'download'    => [
+								'class'          => FormAction::className(),
+								'formClass'      => DownloadProductsForm::className(),
+								'messageSuccess' => \Yii::t('app', 'Download Product Success.'),
+								'messageFailed'  => \Yii::t('app', 'Download Product Failed.'),
+								'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
+								'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
+						],
         ];
     }
 

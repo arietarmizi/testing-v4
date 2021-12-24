@@ -5,6 +5,7 @@ namespace common\models;
 
 
 use common\base\ActiveRecord;
+use PhpOffice\PhpSpreadsheet\Calculation\Category;
 
 /**
  * Class Product
@@ -15,7 +16,7 @@ use common\base\ActiveRecord;
  * @property string  $marketplaceId
  * @property string  $productId
  * @property string  $shopId
- * @property string  $productSubCategoryId
+ * @property string  $productCategoryId
  * @property string  $sku
  * @property string  $code
  * @property string  $name
@@ -31,6 +32,7 @@ use common\base\ActiveRecord;
  * @property string  $updatedAt
  *
  * @property ProductVariant[] $productVariants
+ * @property Category $productCategory
  * @property double $minPrice
  * @property double $maxPrice
  */
@@ -69,7 +71,7 @@ class Product extends ActiveRecord
 
     public function getCategory()
     {
-        return $this->hasMany(Product::class, ['categoryId' => 'id']);
+        return $this->hasOne(Category::class, ['productCategoryId' => 'id']);
     }
 
     public function getShop()
@@ -82,11 +84,6 @@ class Product extends ActiveRecord
 			return ProductImages::find()
 				->joinWith('productVariant')
 				->where([ProductVariant::tableName().'.productId' => $this->id]);
-    }
-
-    public function getProductSubCategory()
-    {
-        return $this->hasOne(ProductSubCategory::class, ['id' => 'productSubCategoryId']);
     }
 
     public  function getProductVariants()
