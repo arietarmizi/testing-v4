@@ -14,7 +14,7 @@ use nadzif\file\FileManager;
 
 class AddProductImagesForm extends BaseForm
 {
-    public $productId;
+    public $productVariantId;
     public $type;
     public $imageFiles;
     public $isPrimary;
@@ -27,10 +27,10 @@ class AddProductImagesForm extends BaseForm
     public function rules()
     {
         return [
-            [['productId'], 'required'],
+            [['productVariantId'], 'required'],
             ['type', 'string'],
             [['imageFiles'], 'file', 'mimeTypes' => ['image/*'], 'extensions' => $this->allowedExtension],
-            ['productId', 'string'],
+            ['productVariantId', 'string'],
             ['isPrimary', 'boolean']
         ];
     }
@@ -48,7 +48,7 @@ class AddProductImagesForm extends BaseForm
                 foreach ($fileInstances as $fileInstance) {
                     $this->_file             = $fileManager->upload($fileInstance, $folder);
                     $productImage            = new ProductImages();
-                    $productImage->productId = $this->productId;
+                    $productImage->productVariantId = $this->productVariantId;
                     $productImage->fileId    = $this->_file->id;
                     $productImage->isPrimary = false;
                     $productImage->status    = ProductImages::STATUS_ACTIVE;

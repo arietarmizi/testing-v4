@@ -35,40 +35,34 @@ class ScrapFrom extends BaseForm
 
         $this->_response = $provider->send();
 
-        $remoteCategories = $this->_response['data'];
-        foreach ($remoteCategories['categories'] as $remoteCategory) {
-//            $category = Category::find()
-//                ->where(['id' => (string)$remoteCategory['id']])
-//                ->one();
-//            if (!$category) {
-            $category = new ProductCategory();
-//            }
-            $category->id   = $remoteCategory['id'];
-            $category->name = $remoteCategory['name'];
-            $category->save(false);
-//            var_dump($remoteCategory['child']);
-//            die;
 
-            if (!isset($remoteCategory['child']) || !is_array($remoteCategory['child'])) {
-                continue;
-            }
+        $responseCategory = $this->_response['data'];
 
-            foreach ($remoteCategory['child'] as $remoteCategoryChild) {
-//                $categoryDetail = ProductCategoryDetail::find()
-//                    ->where(['id' => (string)$remoteCategoryChild['id']])
-//                    ->one();
-//                if (!$remoteCategoryChild) {
-                $categoryDetail = new ProductSubCategory();
-//                }
-                $categoryDetail->productCategoryId = $remoteCategory['id'];
-                $categoryDetail->id                = $remoteCategoryChild['id'];
-                $categoryDetail->name              = $remoteCategoryChild['name'];
-                $categoryDetail->save(false);
-            }
-        }
-
+        $this->loopChild($responseCategory['categories']);
         return true;
     }
+
+	/**
+	 * @param array $arrCategories
+	 * @param string $parent
+	 */
+    public function loopChild($arrCategories,$parent = null){
+//			print_r($arrCategory);
+
+			foreach ($arrCategories as $rowCategory) {
+
+				$category = new ProductCategory();
+
+				$category->id = $rowCategory['id'];
+				$category->name = $rowCategory['name'];
+				$category->parentId = $parent;
+				$category->save(false);
+
+				if (isset($rowCategory['child']) && is_array($rowCategory['child'])) {
+					$this->loopChild($rowCategory['child'], $rowCategory['id']);
+				}
+			}
+		}
 
     public function response()
     {

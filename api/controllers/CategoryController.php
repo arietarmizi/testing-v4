@@ -46,7 +46,7 @@ class CategoryController extends Controller
     public function actionList()
     {
         $productCategory   = ProductCategory::find()
-            ->joinWith(['productSubCategory'])
+						->where("id = '8'")
             ->all();
         $response          = new Response();
         $response->status  = 200;
@@ -58,13 +58,10 @@ class CategoryController extends Controller
                 'id',
                 'name',
                 'status',
-                'productSubCategory' => function ($model) {
-                    /** @var ProductCategory $model */
-                    return [
-                        $model->getProductSubCategory()->all(),
-                        'name' => $model->getProductSubCategory()->all(),
-                    ];
-                },
+								'child' => function ($model)
+								{
+									return $model->getChild();
+								}
             ]
         ]);
         return $response;

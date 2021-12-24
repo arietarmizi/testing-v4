@@ -12,7 +12,7 @@ use yii\helpers\ArrayHelper;
  * Class ProductGalleries
  * @package common\models
  * @property string  $id
- * @property string  $productId
+ * @property string  $productVariantId
  * @property string  $type
  * @property string  $fileId
  * @property boolean $isPrimary

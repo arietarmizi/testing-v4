@@ -12,6 +12,7 @@ use common\base\ActiveRecord;
  *
  * @property string $id
  * @property string $name
+ * @property string $parentId
  * @property string $status
  * @property string $createdAt
  * @property string $updatedAt
@@ -46,4 +47,10 @@ class ProductCategory extends ActiveRecord
 //        return $this->hasOne(ProductSubCategory::class, ['productCategoryId' => 'id']);
         return $this->hasOne(ProductSubCategory::class, ['productCategoryId' => 'id']);
     }
+
+    public function getChild(){
+    	return ProductCategory::find()
+				->where([ProductCategory::tableName().'.parentId' => $this->id])
+				->all();
+		}
 }
