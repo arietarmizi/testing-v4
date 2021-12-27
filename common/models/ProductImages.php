@@ -12,7 +12,7 @@ use yii\helpers\ArrayHelper;
  * Class ProductGalleries
  * @package common\models
  * @property string  $id
- * @property string  $productVariantId
+ * @property string  $productId
  * @property string  $type
  * @property string  $fileId
  * @property boolean $isPrimary
@@ -23,7 +23,7 @@ use yii\helpers\ArrayHelper;
  * @property string  $updatedAt
  *
  * @property File    $file
- * @property ProductVariant $productVariant
+ * @property Product $product
  */
 class ProductImages extends ActiveRecord
 {
@@ -73,9 +73,9 @@ class ProductImages extends ActiveRecord
         return [];
     }
 
-    public function getProductVariant()
+    public function getProduct()
     {
-        return $this->hasOne(ProductVariant::class, ['id' => 'productVariantId']);
+        return $this->hasOne(Product::class, ['id' => 'productId']);
     }
 
     public function getFile()

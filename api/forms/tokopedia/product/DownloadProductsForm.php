@@ -8,6 +8,7 @@ use common\models\Marketplace;
 use common\models\Product;
 use common\models\ProductImages;
 use common\models\ProductVariant;
+use common\models\ProductVariantImages;
 use common\models\Provider;
 use common\models\Shop;
 use GuzzleHttp\Exception\ClientException;
@@ -41,6 +42,9 @@ class DownloadProductsForm extends BaseForm
 
 	/** @var ProductImages */
 	private $_productImages;
+
+	/** @var ProductVariantImages */
+	private $_productVariantImages;
 
 	public function init()
 	{
@@ -98,37 +102,52 @@ class DownloadProductsForm extends BaseForm
 
 				$success &= $this->_product->save() && $this->_product->refresh();
 
-				$this->_productVariant = ProductVariant::find()
-					->where(['name' => $this->_product->name])
-					->one();
+				// save image
+				if ($remoteProduct['pictures'] && is_array($remoteProduct['pictures'])) {
+
+					foreach ($remoteProduct['pictures'] as $picture){
+						$this->_productImages = new ProductImages();
+
+						if($picture['status'] == 2){
+							$this->_productImages->isPrimary = 1;
+						}else{
+							$this->_productImages->isPrimary = 0;
+						}
+
+						$this->_productImages->productId = $this->_product->id;
+						$this->_productImages->originalURL = $picture['OriginalURL'];
+						$this->_productImages->thumbnailURL = $picture['ThumbnailURL'];
+
+						$success &= $this->_productImages->save() && $this->_productImages->refresh();
+					}
+				}
+				//end of save image
 
 				//save variant
-				if (isset($remoteProduct['variant']['childrenID']) && is_array($remoteProduct['variant'])) {
+				if ($remoteProduct['variant']) {
 					foreach ($remoteProduct['variant']['childrenID'] as $productId){
 						$variant = $this->getVariant($productId);
 
 						if($variant){
 							$this->setVariant($variant[0]);
+							$success &= $this->_productVariant->save() && $this->_productVariant->refresh();
 						}
 
-						$success &= $this->_productVariant->save() && $this->_productVariant->refresh();
 
 						// save image
-						if ($remoteProduct['pictures'] && is_array($remoteProduct['pictures'])) {
-							$counter = 1;
-							foreach ($remoteProduct['pictures'] as $picture){
-								$this->_productImages = new ProductImages();
+						if ($variant[0]['pictures'] && is_array($variant[0]['pictures'])) {
 
-								if($counter == 1){
-									$this->_productImages->isPrimary = 1;
+							foreach ($variant[0]['pictures'] as $picture){
+
+								if($picture['status'] != 1){
+									$this->_productVariantImages = new ProductVariantImages();
+									$this->_productVariantImages->isPrimary = 1;
+									$this->_productVariantImages->productVariantId = $this->_productVariant->id;
+									$this->_productVariantImages->originalURL = $picture['OriginalURL'];
+									$this->_productVariantImages->thumbnailURL = $picture['ThumbnailURL'];
+									$success &= $this->_productVariantImages->save() && $this->_productVariantImages->refresh();
 								}
 
-								$this->_productImages->productVariantId = $this->_productVariant->id;
-								$this->_productImages->originalURL = $picture['OriginalURL'];
-								$this->_productImages->thumbnailURL = $picture['ThumbnailURL'];
-
-								$success &= $this->_productImages->save() && $this->_productImages->refresh();
-								$counter++;
 							}
 						}
 						//end of save image
@@ -140,20 +159,18 @@ class DownloadProductsForm extends BaseForm
 
 					// save image
 					if ($remoteProduct['pictures'] && is_array($remoteProduct['pictures'])) {
-						$counter = 1;
-						foreach ($remoteProduct['pictures'] as $picture){
-							$this->_productImages = new ProductImages();
 
-							if($counter == 1){
-								$this->_productImages->isPrimary = 1;
+						foreach ($remoteProduct['pictures'] as $picture){
+
+							if($picture['status'] != 1){
+								$this->_productVariantImages = new ProductVariantImages();
+								$this->_productVariantImages->isPrimary = 1;
+								$this->_productVariantImages->productVariantId = $this->_productVariant->id;
+								$this->_productVariantImages->originalURL = $picture['OriginalURL'];
+								$this->_productVariantImages->thumbnailURL = $picture['ThumbnailURL'];
+								$success &= $this->_productVariantImages->save() && $this->_productVariantImages->refresh();
 							}
 
-							$this->_productImages->productVariantId = $this->_productVariant->id;
-							$this->_productImages->originalURL = $picture['OriginalURL'];
-							$this->_productImages->thumbnailURL = $picture['ThumbnailURL'];
-
-							$success &= $this->_productImages->save() && $this->_productImages->refresh();
-							$counter++;
 						}
 					}
 					//end of save image
