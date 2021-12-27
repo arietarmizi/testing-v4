@@ -3,7 +3,6 @@
 
 namespace api\controllers;
 
-
 use api\actions\ListAction;
 use api\components\Controller;
 use api\components\FormAction;
@@ -66,11 +65,25 @@ class ProductController extends Controller
             'list'      => [
                 'class'             => ListAction::class,
                 'query'             => function () {
-                    return Product::find()
-                        ->where([Product::tableName() . '.status' => Product::STATUS_ACTIVE])
-//                        ->where([Product::tableName() . '.categoryId' => Category::tableName() . '.id'])
-//                        ->joinWith(['category'])
-                        ->addOrderBy([Product::tableName() . '.name' => SORT_ASC]);
+										$filters        = \Yii::$app->request->get();
+                    $query =  Product::find()->where([Product::tableName() . '.status' => Product::STATUS_ACTIVE]);
+
+										unset( $filters['page'], $filters['per-page'], $filters['sort']);
+
+										if ($filters) {
+												foreach ($filters as $key => $value) {
+														if ($key == 'shopId') {
+																$query->andWhere([Product::tableName() . '.' . $key => $value]);
+														} else {
+																$query->andWhere(['like', Product::tableName() . '.' . $key, $value]);
+														}
+												}
+										}
+
+                    $query->addOrderBy([Product::tableName() . '.name' => SORT_ASC]);
+
+
+                    return $query;
                 },
                 'toArrayProperties' => [
                     Product::class => [
@@ -101,7 +114,8 @@ class ProductController extends Controller
                                 ProductImages::class => [
                                     'id',
                                     'originalURL',
-																		'thumbnailURL'
+																		'thumbnailURL',
+																		'isPrimary'
                                 ]
                             ]);
                         },

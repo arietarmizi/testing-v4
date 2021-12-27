@@ -82,9 +82,14 @@ class Product extends ActiveRecord
 
     public function getProductImages()
     {
+//			return $this->hasMany(ProductImages::class, ['productId' => 'id']);
+
 			return ProductImages::find()
-				->joinWith('productVariant')
-				->where([ProductVariant::tableName().'.productId' => $this->id]);
+				->where([
+					'productId' => $this->id,
+					'isPrimary' => 1
+				])
+				->one();
     }
 
     public  function getProductVariants()
