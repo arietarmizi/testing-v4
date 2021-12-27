@@ -6,6 +6,7 @@ use api\components\BaseForm;
 use api\config\ApiCode;
 use common\models\Marketplace;
 use common\models\Product;
+use common\models\ProductImages;
 use common\models\ProductVariant;
 use common\models\Provider;
 use common\models\Shop;
@@ -38,6 +39,9 @@ class DownloadProductsForm extends BaseForm
 	/** @var ProductVariant */
 	private $_productVariant;
 
+	/** @var ProductImages */
+	private $_productImages;
+
 	public function init()
 	{
 		parent::init();
@@ -69,11 +73,6 @@ class DownloadProductsForm extends BaseForm
 
 		foreach ($remoteProducts as $remoteProduct) {
 
-//			echo "<pre>";
-//			print_r($remoteProduct);
-//			echo "</pre>";
-//			die();
-
 			$this->_product = Product::find()
 				->where(['marketplaceProductId' => (string)$remoteProduct['basic']['productID']])
 				->one();
@@ -103,45 +102,63 @@ class DownloadProductsForm extends BaseForm
 					->where(['name' => $this->_product->name])
 					->one();
 
-				if(!$this->_productVariant){
-					$this->_productVariant = new ProductVariant();
-				}
-
-				$this->_productVariant->sku 						= isset($remoteProduct['other']['sku']) ? $remoteProduct['other']['sku'] : null ;
-				$this->_productVariant->productId 			= $this->_product->id;
-				$this->_productVariant->name 						= $this->_product->name;
-				$this->_productVariant->minOrder				= $this->_product->minOrder;
-				$this->_productVariant->description			= $this->_product->description;
-				$this->_productVariant->defaultPrice		= $remoteProduct['price']['value'];
-
-				if($remoteProduct['volume']){
-					$this->_productVariant->length					= $remoteProduct['volume']['length'];
-					$this->_productVariant->width						= $remoteProduct['volume']['width'];
-					$this->_productVariant->height					= $remoteProduct['volume']['height'];
-				}
-
-				$this->_productVariant->weight					= $remoteProduct['weight']['value'];
-				$this->_productVariant->isPreOrder			= isset($remoteProduct['preorder']) ? 1 : 0;
-				$this->_productVariant->warehouseId			= $remoteProduct['warehouses'][0]['warehouseID'];
-				$this->_productVariant->isWholesale			= isset($remoteProduct['wholesale']) ? 1 : 0;
-				$this->_productVariant->isMustInsurance	= $remoteProduct['basic']['mustInsurance'];
-
-				$success &= $this->_productVariant->save() && $this->_productVariant->refresh();
-
+				//save variant
 				if (isset($remoteProduct['variant']['childrenID']) && is_array($remoteProduct['variant'])) {
 					foreach ($remoteProduct['variant']['childrenID'] as $productId){
 						$variant = $this->getVariant($productId);
 
-//						echo "<pre>";
-//						print_r($variant);
-//						echo "<pre>";
 						if($variant){
 							$this->setVariant($variant[0]);
 						}
 
 						$success &= $this->_productVariant->save() && $this->_productVariant->refresh();
+
+						// save image
+						if ($remoteProduct['pictures'] && is_array($remoteProduct['pictures'])) {
+							$counter = 1;
+							foreach ($remoteProduct['pictures'] as $picture){
+								$this->_productImages = new ProductImages();
+
+								if($counter == 1){
+									$this->_productImages->isPrimary = 1;
+								}
+
+								$this->_productImages->productVariantId = $this->_productVariant->id;
+								$this->_productImages->originalURL = $picture['OriginalURL'];
+								$this->_productImages->thumbnailURL = $picture['ThumbnailURL'];
+
+								$success &= $this->_productImages->save() && $this->_productImages->refresh();
+								$counter++;
+							}
+						}
+						//end of save image
+
 					}
+				}else{
+					$this->setVariant($remoteProduct);
+					$success &= $this->_productVariant->save() && $this->_productVariant->refresh();
+
+					// save image
+					if ($remoteProduct['pictures'] && is_array($remoteProduct['pictures'])) {
+						$counter = 1;
+						foreach ($remoteProduct['pictures'] as $picture){
+							$this->_productImages = new ProductImages();
+
+							if($counter == 1){
+								$this->_productImages->isPrimary = 1;
+							}
+
+							$this->_productImages->productVariantId = $this->_productVariant->id;
+							$this->_productImages->originalURL = $picture['OriginalURL'];
+							$this->_productImages->thumbnailURL = $picture['ThumbnailURL'];
+
+							$success &= $this->_productImages->save() && $this->_productImages->refresh();
+							$counter++;
+						}
+					}
+					//end of save image
 				}
+				//end of save variant
 
 				$success ? $transaction->commit() : $transaction->rollBack();
 
@@ -166,7 +183,7 @@ class DownloadProductsForm extends BaseForm
 
 	public function setVariant($arrVariant){
 		$this->_productVariant = ProductVariant::find()
-			->where(['name' => $arrVariant['basic']['name']])
+			->where(['marketplaceProductId' => (string)$arrVariant['basic']['productID']])
 			->one();
 
 		if(!$this->_productVariant){
@@ -175,6 +192,7 @@ class DownloadProductsForm extends BaseForm
 
 		$this->_productVariant->sku 						= isset($arrVariant['other']['sku']) ? $arrVariant['other']['sku'] : null ;
 		$this->_productVariant->productId 			= $this->_product->id;
+		$this->_productVariant->marketplaceProductId 			= (string)$arrVariant['basic']['productID'];
 		$this->_productVariant->name 						= $arrVariant['basic']['name'];
 		$this->_productVariant->minOrder				= $arrVariant['extraAttribute']['minOrder'];
 		$this->_productVariant->description			=	isset($arrVariant['basic']['shortDesc']) ? $arrVariant['basic']['shortDesc'] : null ;

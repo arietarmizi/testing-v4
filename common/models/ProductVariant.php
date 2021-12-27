@@ -14,6 +14,7 @@ use common\base\ActiveRecord;
  * @property string  $shopId
  * @property string  $sku
  * @property string  $productId
+ * @property string  $marketplaceProductId
  * @property string  $name
  * @property string  $sellingStatus
  * @property boolean $isShelfLife

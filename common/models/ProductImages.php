@@ -16,6 +16,8 @@ use yii\helpers\ArrayHelper;
  * @property string  $type
  * @property string  $fileId
  * @property boolean $isPrimary
+ * @property string  $originalURL
+ * @property string  $thumbnailURL
  * @property string  $status
  * @property string  $createdAt
  * @property string  $updatedAt

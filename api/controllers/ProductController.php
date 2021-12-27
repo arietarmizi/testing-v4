@@ -19,6 +19,7 @@ use api\forms\tokopedia\product\GetInfoByIdForm;
 use api\forms\tokopedia\product\GetInfoBySkuForm;
 use api\forms\tokopedia\product\GetProductVariantForm;
 use common\models\Product;
+use common\models\ProductCategory;
 use common\models\ProductImages;
 use common\models\ProductSubCategory;
 use yii\helpers\ArrayHelper;
@@ -87,9 +88,9 @@ class ProductController extends Controller
 												'maxPrice' => function ($model) {
 													return $model->maxPrice;
 												},
-                        'productSubCategory' => function ($model) {
-                            return ArrayHelper::toArray($model->productSubCategory, [
-                                ProductSubCategory::class => [
+                        'productCategory' => function ($model) {
+                            return ArrayHelper::toArray($model->productCategory, [
+                                ProductCategory::class => [
                                     'id',
                                     'name'
                                 ]
@@ -99,7 +100,8 @@ class ProductController extends Controller
                             return ArrayHelper::toArray($model->productImages, [
                                 ProductImages::class => [
                                     'id',
-                                    'imageUrl'
+                                    'originalURL',
+																		'thumbnailURL'
                                 ]
                             ]);
                         },

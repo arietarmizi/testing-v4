@@ -17,7 +17,7 @@ class m211206_125019_create_product_images_table extends Migration
         $this->createTable(ProductImages::tableName(), [
             'id'        => $this->string(36)->notNull(),
             'productId' => $this->string(36)->notNull(),
-            'fileId'    => $this->integer()->notNull(),
+            'fileId'    => $this->integer(),
             'isPrimary' => $this->boolean()->defaultValue(0),
             'status'    => $this->string(50)->defaultValue(ProductImages::STATUS_ACTIVE),
             'createdAt' => $this->dateTime(),

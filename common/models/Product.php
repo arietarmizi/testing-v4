@@ -32,6 +32,7 @@ use PhpOffice\PhpSpreadsheet\Calculation\Category;
  * @property string  $updatedAt
  *
  * @property ProductVariant[] $productVariants
+ * @property ProductImages $productImages
  * @property Category $productCategory
  * @property double $minPrice
  * @property double $maxPrice
@@ -69,9 +70,9 @@ class Product extends ActiveRecord
         ];
     }
 
-    public function getCategory()
+    public function getProductCategory()
     {
-        return $this->hasOne(Category::class, ['productCategoryId' => 'id']);
+        return $this->hasOne(ProductCategory::class, ['id' => 'productCategoryId']);
     }
 
     public function getShop()
