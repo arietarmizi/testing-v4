@@ -20,17 +20,17 @@ return [
 
 //    TOKOPEDIA PRODUCTS
     'tokopedia/product/product-info-by-id'  => 'tokopedia/product/product-info-by-id',
-	'tokopedia/product/product-info-by-sku' => 'tokopedia/product/product-info-by-sku',
-	'tokopedia/product/get-variant'         => 'tokopedia/product/get-variant',
+    'tokopedia/product/product-info-by-sku' => 'tokopedia/product/product-info-by-sku',
+    'tokopedia/product/get-variant'         => 'tokopedia/product/get-variant',
 
-	'tokopedia/order/get-single-order' => 'tokopedia/order/get-single-order',
+    'tokopedia/order/get-single-order' => 'tokopedia/order/get-single-order',
 
-	'product/create'                           => 'product/create',
-	'product/<id:' . $uuidPattern . '>'        => 'product/update',
-	'product/delete/<id:' . $uuidPattern . '>' => 'product/delete',
-	'product/list'                             => 'product/list',
-	'product/add-image'                        => 'product/add-image',
-	'product/download'                       => 'product/download',
+    'product/create'                           => 'product/create',
+    'product/<id:' . $uuidPattern . '>'        => 'product/update',
+    'product/delete/<id:' . $uuidPattern . '>' => 'product/delete',
+    'product/list'                             => 'product/list',
+    'product/add-image'                        => 'product/add-image',
+    'product/download'                         => 'product/download',
 
     'product-variant/store'                            => 'product-variant/store',
     'product-variant/<id:' . $uuidPattern . '>'        => 'product-variant/update',
@@ -114,4 +114,8 @@ return [
     'courier-information/list'                             => 'courier-information/list',
     'courier-information/<id:' . $uuidPattern . '>'        => 'courier-information/update',
     'courier-information/delete/<id:' . $uuidPattern . '>' => 'courier-information/delete',
+
+    'shipment/download' => 'shipment/download',
+    'shipment/list'     => 'shipment/list',
+    'shipment/update'   => 'shipment/update'
 ];

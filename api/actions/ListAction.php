@@ -11,22 +11,51 @@ use yii\helpers\ArrayHelper;
 class ListAction extends QueryAction
 {
 
+    public $filters = [];
+    public $searchExploder = '_';
+
     /**
-     * @since 2018-05-04 00:41:53
      * @return Response
+     * @since 2018-05-04 00:41:53
      */
-    public function run()
-    {
+    public function run() {
         $modelClass = new $this->query->modelClass;
         $tableName  = $modelClass::tableName();
 
-        $this->query
-            ->andWhere(['<=', $tableName . '.createdAt', $this->controller->firstRequestTime])
-            ->addOrderBy([$tableName . '.createdAt' => \SORT_DESC]);
+        $this->query->andWhere(['<=', $tableName . '.createdAt', $this->controller->firstRequestTime]);
 
+        $queryParams = \Yii::$app->request->queryParams;
+
+        $query = $this->query;
         // setup data provider
-        $dataProvider        = new ActiveDataProvider();
-        $dataProvider->query = $this->query;
+        $dataProvider = new ActiveDataProvider();
+
+        foreach ($this->filters as $attribute => $filter) {
+            if (is_int($attribute)) {
+                $attribute = $filter;
+                $filter    = ["like", $attribute];
+            }
+
+            $searchAttribute = ArrayHelper::getValue($queryParams, $attribute);
+
+            if (!$searchAttribute) {
+                continue;
+            }
+
+            if (ArrayHelper::isIn(ArrayHelper::getValue($filter, 0), ['between'])) {
+                $exploder = explode($this->searchExploder, $searchAttribute);
+
+                foreach ($exploder as $index => $searchAttribute) {
+                    array_push($filter, $index == 0 ? $searchAttribute . ' 00:00:00' : $searchAttribute . ' 23:59:59');
+                }
+            } else {
+                array_push($filter, $searchAttribute);
+            }
+
+            $query->andFilterWhere($filter);
+        }
+
+        $dataProvider->query = $query;
 
         $getAll = (\Yii::$app->request->get('page') == 'all');
 
