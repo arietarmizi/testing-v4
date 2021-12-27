@@ -56,15 +56,15 @@ class DownloadShipmentForm extends BaseForm {
         $transaction = \Yii::$app->db->beginTransaction();
         $success     = true;
 
-        /** @var Provider $provider */
-        $provider                 = \Yii::$app->tokopediaProvider;
-        $provider->_url           = 'v2/logistic/fs/' . $this->fsId . '/info';
-        $provider->_query         = ['shop_id' => $this->_shop->marketplaceShopId];
-        $provider->_requestMethod = Provider::REQUEST_METHOD_GET;
-        $this->_response          = $provider->send();
-
         try {
-            $remoteShipments = $this->_response['data'];
+            /** @var Provider $provider */
+            $provider                 = \Yii::$app->tokopediaProvider;
+            $provider->_url           = 'v2/logistic/fs/' . $this->fsId . '/info';
+            $provider->_query         = ['shop_id' => $this->_shop->marketplaceShopId];
+            $provider->_requestMethod = Provider::REQUEST_METHOD_GET;
+            $this->_response          = $provider->send();
+            $remoteShipments          = $this->_response['data'];
+
             foreach ($remoteShipments as $remoteShipment) {
                 $remoteShipmentServices = $remoteShipment['services'];
                 $this->_shipment        = Shipment::find()
@@ -117,16 +117,14 @@ class DownloadShipmentForm extends BaseForm {
         $transaction = $db->beginTransaction();
         $success     = true;
 
-        // Update Active Courier
-        /** @var Provider $provider */
-        $provider                 = \Yii::$app->tokopediaProvider;
-        $provider->_url           = 'v1/logistic/fs/' . $this->fsId . '/active-info';
-        $provider->_query         = ['shop_id' => $this->_shop->marketplaceShopId];
-        $provider->_requestMethod = Provider::REQUEST_METHOD_GET;
-        $this->_response          = $provider->send();
-
         try {
-            $remoteActiveCouriers = $this->_response['data']['Shops'];
+            /** @var Provider $provider */
+            $provider                 = \Yii::$app->tokopediaProvider;
+            $provider->_url           = 'v1/logistic/fs/' . $this->fsId . '/active-info';
+            $provider->_query         = ['shop_id' => $this->_shop->marketplaceShopId];
+            $provider->_requestMethod = Provider::REQUEST_METHOD_GET;
+            $this->_response          = $provider->send();
+            $remoteActiveCouriers     = $this->_response['data']['Shops'];
 
             foreach ($remoteActiveCouriers as $remoteActiveCourier) {
                 $remoteShipmentInfos = $remoteActiveCourier['ShipmentInfos'];

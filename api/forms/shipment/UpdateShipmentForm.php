@@ -64,15 +64,15 @@ class UpdateShipmentForm extends BaseForm {
         $transaction = \Yii::$app->db->beginTransaction();
         $success     = true;
 
-        /** @var Provider $provider */
-        $provider                 = \Yii::$app->tokopediaProvider;
-        $provider->_url           = 'v2/logistic/fs/' . $this->fsId . '/update';
-        $provider->_query         = ['shop_id' => $this->_shop->marketplaceShopId];
-        $provider->_requestBody   = $this->request;
-        $provider->_requestMethod = Provider::REQUEST_METHOD_POST;
-        $this->_response          = $provider->send();
-
         try {
+            /** @var Provider $provider */
+            $provider                 = \Yii::$app->tokopediaProvider;
+            $provider->_url           = 'v2/logistic/fs/' . $this->fsId . '/update';
+            $provider->_query         = ['shop_id' => $this->_shop->marketplaceShopId];
+            $provider->_requestBody   = $this->request;
+            $provider->_requestMethod = Provider::REQUEST_METHOD_POST;
+            $this->_response          = $provider->send();
+
             foreach ($this->request as $marketplaceShipmentId => $marketplaceShipmentServices) {
                 $isAvailableCount = 0;
                 foreach ($marketplaceShipmentServices as $marketplaceShipmentServiceId => $isAvailable) {
