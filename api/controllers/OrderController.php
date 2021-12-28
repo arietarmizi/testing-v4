@@ -10,6 +10,7 @@ use api\components\FormAction;
 use api\config\ApiCode;
 use api\filters\ContentTypeFilter;
 use api\forms\order\StoreOrderForm;
+use api\forms\order\tokopedia\DownloadOrderForm;
 use api\forms\order\UpdateOrderForm;
 use common\models\CourierInformation;
 use common\models\Customer;
@@ -19,10 +20,8 @@ use common\models\ProductPromo;
 use common\models\Warehouse;
 use yii\helpers\ArrayHelper;
 
-class OrderController extends Controller
-{
-    public function behaviors()
-    {
+class OrderController extends Controller {
+    public function behaviors() {
         $behaviors                        = parent::behaviors();
         $behaviors['content-type-filter'] = [
             'class'       => ContentTypeFilter::class,
@@ -30,15 +29,15 @@ class OrderController extends Controller
             'only'        => [
                 'store',
                 'update',
+                'download'
             ]
         ];
         return $behaviors;
     }
 
-    public function actions()
-    {
+    public function actions() {
         return [
-            'store'  => [
+            'store'    => [
                 'class'          => FormAction::className(),
                 'formClass'      => StoreOrderForm::className(),
                 'messageSuccess' => \Yii::t('app', 'Create Order Success.'),
@@ -46,7 +45,7 @@ class OrderController extends Controller
                 'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
                 'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
             ],
-            'update' => [
+            'update'   => [
                 'class'          => FormAction::class,
                 'formClass'      => UpdateOrderForm::class,
                 'messageSuccess' => \Yii::t('app', 'Update Order Success'),
@@ -56,7 +55,7 @@ class OrderController extends Controller
                 'statusSuccess'  => 200,
                 'statusFailed'   => 400,
             ],
-            'list'   => [
+            'list'     => [
                 'class'             => ListAction::class,
                 'query'             => function () {
                     return Order::find()
@@ -125,16 +124,24 @@ class OrderController extends Controller
                 'apiCodeFailed'     => 400,
                 'successMessage'    => \Yii::t('app', 'Get Order List Success'),
             ],
+            'download' => [
+                'class'          => FormAction::class,
+                'formClass'      => DownloadOrderForm::class,
+                'messageSuccess' => \Yii::t('app', 'Download Order Success.'),
+                'messageFailed'  => \Yii::t('app', 'Download Order Failed.'),
+                'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
+                'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
+            ]
         ];
     }
 
-    public function verbs()
-    {
+    public function verbs() {
         return [
-            'store'  => ['post'],
-            'update' => ['post'],
-            'delete' => ['post'],
-            'list'   => ['get'],
+            'store'    => ['post'],
+            'update'   => ['post'],
+            'delete'   => ['post'],
+            'list'     => ['get'],
+            'download' => ['post']
         ];
     }
 }

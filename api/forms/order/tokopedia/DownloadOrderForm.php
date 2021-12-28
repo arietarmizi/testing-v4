@@ -8,7 +8,9 @@ use api\components\BaseForm;
 use api\components\HttpException;
 use Carbon\Carbon;
 use common\models\Customer;
+use common\models\MasterStatus;
 use common\models\Order;
+use common\models\OrderStatus;
 use common\models\Provider;
 use common\models\Shipment;
 use common\models\ShipmentService;
@@ -19,12 +21,14 @@ class DownloadOrderForm extends BaseForm {
     public $fromDate;
     public $toDate;
     public $shopId;
-    public $warehouseId;
-    public $orderStatus;
 
-    private $_response;
+    public $_response;
+
     private $_page = 1;
     private $_perPage = 10;
+
+    /** @var Shop */
+    private $_shop;
 
     /** @var Order */
     private $_order;
@@ -38,11 +42,16 @@ class DownloadOrderForm extends BaseForm {
     /** @var ShipmentService */
     private $_shipmentService;
 
+    /** @var OrderStatus */
+    private $_orderStatus;
+
     public function rules() {
         return [
             [['fsId', 'shopId'], 'required'],
             [['shopId', 'fsId'], 'number'],
-            ['shopId', 'validateShop']
+            [['fromDate', 'toDate'], 'date', 'format' => 'php:Y-m-d'],
+            ['shopId', 'validateShop'],
+            ['fromDate', 'validateDate']
         ];
     }
 
@@ -58,20 +67,33 @@ class DownloadOrderForm extends BaseForm {
         }
     }
 
+    public function validateDate($attributes, $param = []) {
+        $fromDate = Carbon::parse($this->fromDate);
+        $toDate   = Carbon::parse($this->toDate);
+        $interval = $toDate->diffInDays($fromDate);
+
+        if ($interval > 3) {
+            $this->addError($attributes,
+                \Yii::t('app', 'Can pull order with 3 days interval between fromDate and toDate'));
+        }
+    }
+
     public function init() {
         parent::init();
     }
 
     public function getAllOrders($page, $perPage) {
+        $unixFromDate = Carbon::parse($this->fromDate . ' 00:00:00.000')->timestamp;
+        $unixToDate   = Carbon::parse($this->toDate . ' 00:00:00.000')->timestamp;
         /** @var Provider $provider */
         $provider                 = \Yii::$app->tokopediaProvider;
         $provider->_url           = 'v2/order/list';
         $provider->_query         = [
             'fs_id'     => $this->fsId,
-            'from_date' => $this->fromDate,
-            'to_date'   => $this->toDate,
+            'from_date' => $unixFromDate,
+            'to_date'   => $unixToDate,
             'page'      => $page,
-            'per-page'  => $perPage,
+            'per_page'  => $perPage,
             'shop_id'   => $this->shopId
         ];
         $provider->_requestMethod = Provider::REQUEST_METHOD_GET;
@@ -111,13 +133,12 @@ class DownloadOrderForm extends BaseForm {
     public function getShipment($marketplaceShipmentId) {
         $shipment = Shipment::find()
             ->where([
-                'shopId'                => $this->shopId,
-                'marketplaceShipmentId' => $marketplaceShipmentId
+                'shopId'                => $this->_shop->id,
+                'marketplaceShipmentId' => (string)$marketplaceShipmentId
             ])->one();
 
         if (!$shipment) {
-            $this->addError('shipmentId', \Yii::t('app', 'Shipment not found, you need to sync the shipment first.'));
-            return false;
+            throw new HttpException(400, \Yii::t('app', 'Shipment not found, you need to sync the shipment first.'));
         }
 
         return $shipment;
@@ -131,53 +152,62 @@ class DownloadOrderForm extends BaseForm {
             ])->one();
 
         if (!$shipmentService) {
-            $this->addError('shipmentServiceId',
+            throw new HttpException(400,
                 \Yii::t('app', 'Shipment service not found, you need to sync the shipment first.'));
-            return false;
         }
 
         return $shipmentService;
     }
 
-    public function submit() {
-        $transaction = \Yii::$app->db->beginTransaction();
-        $success     = true;
+    public function getOrderStatus($marketplaceOrderStatus) {
+        return OrderStatus::find()
+            ->where([
+                'marketplaceId'         => $this->_shop->marketplaceId,
+                'marketplaceStatusCode' => $marketplaceOrderStatus
+            ])->one();
+    }
 
-        try {
-            $remoteOrders = $this->getAllOrders($this->_page, $this->_perPage);
-            if ($remoteOrders) {
-                foreach ($remoteOrders as $remoteOrder) {
-                    $remoteSingleOrder      = $this->getSingleOrder($remoteOrder['order_id']);
-                    $this->_customer        = $this->getCustomer($remoteSingleOrder['buyer_info']);
-                    $this->_shipment        = $this->getShipment($remoteSingleOrder['shipping_info']['shipping_id']);
-                    $this->_shipmentService = $this->getShipmentService(
-                        $this->_shipment->id, $remoteSingleOrder['shipping_info']['sp_id']
-                    );
+    public function saveOrders($page, $perPage) {
+        $remoteOrders = $this->getAllOrders($page, $perPage);
+        if ($remoteOrders != null) {
+            foreach ($remoteOrders as $remoteOrder) {
+                $remoteSingleOrder      = $this->getSingleOrder($remoteOrder['order_id']);
+                $this->_customer        = $this->getCustomer($remoteSingleOrder['buyer_info']);
+                $this->_shipment        = $this->getShipment($remoteSingleOrder['order_info']['shipping_info']['shipping_id']);
+                $this->_shipmentService = $this->getShipmentService(
+                    $this->_shipment->id,
+                    $remoteSingleOrder['order_info']['shipping_info']['sp_id']
+                );
+                $this->_orderStatus     = $this->getOrderStatus($remoteSingleOrder['order_status']);
 
-                    $this->_order = Order::find()
-                        ->where(['refInv' => $remoteOrder['invoice_ref_num']])
-                        ->one();
+                $this->_order = Order::find()
+                    ->where(['refInv' => $remoteOrder['invoice_ref_num']])
+                    ->one();
 
-                    if (!$this->_order) {
-                        $this->_order = new Order();
-                    }
-
-                    $this->_order->orderDate         = Carbon::parse($remoteSingleOrder['create_time'])
-                        ->setTimezone('UTC')->format('Y-m-d H:i:s');
-                    $this->_order->refInv            = $remoteSingleOrder['invoice_number'];
-                    $this->_order->customerId        = $this->_customer->id;
-                    $this->_order->shipmentId        = $this->_shipment->id;
-                    $this->_order->shipmentServiceId = $this->_shipmentService->id;
-                    
+                if (!$this->_order) {
+                    $this->_order = new Order();
                 }
 
-                $this->_page++;
-
+                $this->_order->orderDate         = Carbon::parse($remoteSingleOrder['create_time'])
+                    ->setTimezone('UTC')->format('Y-m-d H:i:s');
+                $this->_order->refInv            = $remoteSingleOrder['invoice_number'];
+                $this->_order->customerId        = $this->_customer->id;
+                $this->_order->shipmentId        = $this->_shipment->id;
+                $this->_order->shipmentServiceId = $this->_shipmentService->id;
+                $this->_order->orderStatusId     = $this->_orderStatus->id;
+                $this->_order->save() && $this->_order->refresh();
             }
-
-        } catch (\Exception $e) {
-            $transaction->rollBack();
-            return false;
+            $this->_page = $this->_page + 1;
+            $this->saveOrders($this->_page, $this->_perPage);
         }
+    }
+
+    public function submit() {
+        $this->saveOrders($this->_page, $this->_perPage);
+        return true;
+    }
+
+    public function response() {
+        return [];
     }
 }

@@ -19,7 +19,7 @@ use common\base\ActiveRecord;
  * @property string $warehouseId
  * @property string $promoId
  * @property string $discountId
- * @property string $orderStatus
+ * @property string $orderStatusId
  * @property string $createdAt
  * @property string $updatedAt
  */
@@ -89,5 +89,8 @@ class Order extends ActiveRecord
         return $this->hasOne(ProductDiscount::class, ['id' => 'discountId']);
     }
 
-
+    public function getOrderStatus()
+    {
+        return $this->hasOne(OrderStatus::class, ['id' => 'orderStatusId']);
+    }
 }
