@@ -15,8 +15,9 @@ class m211114_174236_create_product_variant_table extends Migration
     {
         $this->createTable(ProductVariant::tableName(), [
             'id'                 => $this->string(36)->notNull(),
-            'sku'                => $this->string(100)->notNull(),
+            'sku'                => $this->string(100),
             'productId'          => $this->string(36)->notNull(),
+            'marketplaceProductVariantId' => $this->string(36)->notNull(),
             'name'               => $this->string(255)->notNull(),
             'sellingStatus'      => $this->string(100)->defaultValue(ProductVariant::SELLING_FOR_SALE),
             'isShelfLife'        => $this->boolean()->defaultValue(0),

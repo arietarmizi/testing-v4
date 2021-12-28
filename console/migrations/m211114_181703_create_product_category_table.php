@@ -16,6 +16,7 @@ class m211114_181703_create_product_category_table extends Migration
         $this->createTable(ProductCategory::tableName(), [
             'id'        => $this->string(36)->notNull(),
             'name'      => $this->string(255)->notNull(),
+            'parentId'  => $this->string(36),
             'status'    => $this->string(50)->defaultValue(ProductCategory::STATUS_ACTIVE),
             'createdAt' => $this->dateTime(),
             'updatedAt' => $this->dateTime(),

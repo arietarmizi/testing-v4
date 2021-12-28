@@ -21,7 +21,7 @@ class m211202_041745_create_devices_table extends Migration
             'firebaseToken' => $this->string(255),
             'osType'        => $this->integer(),
             'osVersion'     => $this->string(100),
-            'identifier'    => $this->string(100)->notNull(),
+            'identifier'    => $this->string(100),
             'playerId'      => $this->string(255),
             'model'         => $this->string(100),
             'appVersion'    => $this->string(255),

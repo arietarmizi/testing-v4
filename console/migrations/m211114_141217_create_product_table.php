@@ -1,5 +1,6 @@
 <?php
 
+use common\models\ProductCategory;
 use console\base\Migration;
 use common\models\Product;
 
@@ -17,7 +18,7 @@ class m211114_141217_create_product_table extends Migration
             'id'                   => $this->string(36)->notNull(),
             'marketplaceProductId' => $this->string(36),
             'shopId'               => $this->string(36),
-            'productSubCategoryId' => $this->string(36),
+            'productCategoryId' => $this->string(36),
             'code'                 => $this->string(50),
             'name'                 => $this->string(255)->notNull(),
             'condition'            => $this->string(50)->defaultValue(Product::CONDITION_NEW),
@@ -31,6 +32,11 @@ class m211114_141217_create_product_table extends Migration
         ], $this->tableOptions);
 
         $this->addPrimaryKey('productId', Product::tableName(), ['id']);
+				$this->addForeignKey('fk_product_product_category',
+						Product::tableName(), 'productCategoryId',
+						ProductCategory::tableName(), 'id',
+						'CASCADE', 'CASCADE'
+			);
     }
 
     /**
