@@ -90,7 +90,7 @@ class DownloadProductsForm extends BaseForm
 					$this->_product = new Product();
 				}
 
-				$this->_product->shopId 								= $shop['id'];
+				$this->_product->shopId 								= $this->shopId;
 				$this->_product->marketplaceProductId		= $remoteProduct['basic']['productID'];
 				$this->_product->productCategoryId 			= $remoteProduct['basic']['childCategoryID'];
 				$this->_product->name										= $remoteProduct['basic']['name'];
