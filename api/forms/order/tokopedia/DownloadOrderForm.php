@@ -10,7 +10,10 @@ use Carbon\Carbon;
 use common\models\Customer;
 use common\models\MasterStatus;
 use common\models\Order;
+use common\models\OrderDetail;
 use common\models\OrderStatus;
+use common\models\Product;
+use common\models\ProductVariant;
 use common\models\Provider;
 use common\models\Shipment;
 use common\models\ShipmentService;
@@ -33,6 +36,9 @@ class DownloadOrderForm extends BaseForm {
     /** @var Order */
     private $_order;
 
+    /** @var OrderDetail */
+    private $_orderDetail;
+
     /** @var Customer */
     private $_customer;
 
@@ -41,6 +47,9 @@ class DownloadOrderForm extends BaseForm {
 
     /** @var ShipmentService */
     private $_shipmentService;
+
+    /** @var ProductVariant */
+    private $_productVariant;
 
     /** @var OrderStatus */
     private $_orderStatus;
@@ -159,19 +168,43 @@ class DownloadOrderForm extends BaseForm {
         return $shipmentService;
     }
 
+    public function getProductVariant($marketplaceProductVariantId) {
+        $productVariant = ProductVariant::find()
+            ->joinWith(['product'])
+            ->where([
+                Product::tableName() . '.shopId'                             => $this->_shop->id,
+                ProductVariant::tableName() . '.marketplaceProductVariantId' => (string)$marketplaceProductVariantId
+            ])->one();
+
+        if (!$productVariant) {
+            throw new HttpException(400,
+                \Yii::t('app', 'Product variant not found, you need to sync the product first.'));
+        }
+
+        return $productVariant;
+    }
+
     public function getOrderStatus($marketplaceOrderStatus) {
-        return OrderStatus::find()
+        $orderStatus = OrderStatus::find()
             ->where([
                 'marketplaceId'         => $this->_shop->marketplaceId,
                 'marketplaceStatusCode' => $marketplaceOrderStatus
             ])->one();
+
+        if (!$orderStatus) {
+            throw new HttpException(400,
+                \Yii::t('app', 'Sorry, order status is not available.'));
+        }
+        return $orderStatus;
     }
 
     public function saveOrders($page, $perPage) {
         $remoteOrders = $this->getAllOrders($page, $perPage);
         if ($remoteOrders != null) {
             foreach ($remoteOrders as $remoteOrder) {
-                $remoteSingleOrder      = $this->getSingleOrder($remoteOrder['order_id']);
+                $remoteSingleOrder  = $this->getSingleOrder($remoteOrder['order_id']);
+                $remoteOrderDetails = $remoteSingleOrder['order_info']['order_detail'];
+
                 $this->_customer        = $this->getCustomer($remoteSingleOrder['buyer_info']);
                 $this->_shipment        = $this->getShipment($remoteSingleOrder['order_info']['shipping_info']['shipping_id']);
                 $this->_shipmentService = $this->getShipmentService(
@@ -196,6 +229,26 @@ class DownloadOrderForm extends BaseForm {
                 $this->_order->shipmentServiceId = $this->_shipmentService->id;
                 $this->_order->orderStatusId     = $this->_orderStatus->id;
                 $this->_order->save() && $this->_order->refresh();
+
+                if (!empty($this->_order->orderDetails)) {
+                    OrderDetail::deleteAll(['orderId' => $this->_order->id]);
+                }
+
+                foreach ($remoteOrderDetails as $remoteOrderDetail) {
+                    $this->_productVariant = $this->getProductVariant($remoteOrderDetail['product_id']);
+
+                    $this->_orderDetail                   = new OrderDetail();
+                    $this->_orderDetail->orderId          = $this->_order->id;
+                    $this->_orderDetail->productVariantId = $this->_productVariant->id;
+                    $this->_orderDetail->quantity         = $remoteOrderDetail['quantity'];
+                    $this->_orderDetail->weight           = $remoteOrderDetail['weight'];
+                    $this->_orderDetail->totalWeight      = $remoteOrderDetail['total_weight'];
+                    $this->_orderDetail->isFreeReturn     = $remoteOrderDetail['is_free_returns'];
+                    $this->_orderDetail->productPrice     = $remoteOrderDetail['product_price'];
+                    $this->_orderDetail->insurancePrice   = $remoteOrderDetail['insurance_price'];
+                    $this->_orderDetail->subTotalPrice    = $remoteOrderDetail['subtotal_price'];
+                    $this->_orderDetail->save() && $this->_orderDetail->refresh();
+                }
             }
             $this->_page = $this->_page + 1;
             $this->saveOrders($this->_page, $this->_perPage);

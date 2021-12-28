@@ -9,6 +9,7 @@ use common\base\ActiveRecord;
 /**
  * Class Order
  * @package common\models
+ * @property string $id
  * @property string $orderId
  * @property string $orderDate
  * @property string $shopId
@@ -22,6 +23,8 @@ use common\base\ActiveRecord;
  * @property string $orderStatusId
  * @property string $createdAt
  * @property string $updatedAt
+ *
+ * @property OrderDetail[] $orderDetails
  */
 class Order extends ActiveRecord
 {
@@ -87,6 +90,11 @@ class Order extends ActiveRecord
     public function getDiscount()
     {
         return $this->hasOne(ProductDiscount::class, ['id' => 'discountId']);
+    }
+
+    public function getOrderDetails()
+    {
+        return $this->hasMany(OrderDetail::class, ['orderId' => 'id']);
     }
 
     public function getOrderStatus()
