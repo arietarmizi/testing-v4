@@ -16,10 +16,8 @@ use common\models\User;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 
-class ShopController extends Controller
-{
-    public function behaviors()
-    {
+class ShopController extends Controller {
+    public function behaviors() {
         $behaviors = parent::behaviors();
 
         $behaviors['content-type-filter'] = [
@@ -33,8 +31,7 @@ class ShopController extends Controller
         return $behaviors;
     }
 
-    public function actions()
-    {
+    public function actions() {
         return [
             'store'  => [
                 'class'          => FormAction::className(),
@@ -58,6 +55,11 @@ class ShopController extends Controller
                     return Shop::find()
                         ->joinWith(['marketplace', 'user']);
                 },
+                'filters'           => [
+                    'marketplaceShopId' => ['=', Shop::tableName() . '.marketplaceShopId'],
+                    'marketplaceId'     => ['=', Shop::tableName() . '.marketplaceId'],
+                    'userId'            => ['=', User::tableName() . '.id']
+                ],
                 'toArrayProperties' => [
                     Shop::class => [
                         'id',
@@ -94,17 +96,16 @@ class ShopController extends Controller
                 ],
                 'apiCodeSuccess'    => 0,
                 'apiCodeFailed'     => 400,
-                'successMessage'    => \Yii::t('app', 'Get product variant list success'),
+                'successMessage'    => \Yii::t('app', 'Get Shop List Success'),
             ]
         ];
     }
 
-    public function actionDelete($id)
-    {
+    public function actionDelete($id) {
         $shop = Shop::find()
             ->where(['id' => $id])
             ->one();
-        if ($shop){
+        if ($shop) {
             $shop->status = Shop::STATUS_DELETED;
             $shop->save();
 
@@ -119,8 +120,7 @@ class ShopController extends Controller
         throw new NotFoundHttpException(\Yii::t('app', 'Shop ID Not Found!'), 400);
     }
 
-    protected function verbs()
-    {
+    protected function verbs() {
         return [
             'store'  => ['post'],
             'update' => ['post'],
