@@ -89,7 +89,7 @@ class RegisterForm extends BaseForm
         $user->name               = $this->name;
         $user->phoneNumber        = $this->phoneNumber;
         $user->email              = $this->email;
-        $user->type               = $this->type ? $this->type : User::types();
+        $user->type               = $this->type ? $this->type : User::TYPE_OWNER;
         $user->birthDate          = $this->birthDate;
         $user->address            = $this->address;
         $user->verified           = true;
