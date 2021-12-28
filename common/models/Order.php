@@ -14,7 +14,8 @@ use common\base\ActiveRecord;
  * @property string $shopId
  * @property string $refInv
  * @property string $customerId
- * @property string $courierId
+ * @property string $shipmentId
+ * @property string $shipmentServiceId
  * @property string $warehouseId
  * @property string $promoId
  * @property string $discountId
@@ -63,9 +64,14 @@ class Order extends ActiveRecord
         return $this->hasOne(Customer::class, ['customerId' => 'id']);
     }
 
-    public function getCourier()
+    public function getShipment()
     {
-        return $this->hasOne(CourierInformation::class, ['courierId' => 'id']);
+        return $this->hasOne(Shipment::class, ['shipmentId' => 'id']);
+    }
+
+    public function getShipmentService()
+    {
+        return $this->hasOne(ShipmentService::class, ['shipmentServiceId' => 'id']);
     }
 
     public function getWarehouse()

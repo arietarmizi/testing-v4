@@ -9,7 +9,8 @@ use common\base\ActiveRecord;
 /**
  * Class Customer
  * @package common\models
- * @property string $customerId
+ * @property string $id
+ * @property string $marketplaceCustomerId
  * @property string $customerName
  * @property string $email
  * @property double $phoneNumber

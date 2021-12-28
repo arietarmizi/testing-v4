@@ -1,16 +1,14 @@
 <?php
 
 
-namespace api\forms\shipment;
+namespace api\forms\shipment\tokopedia;
 
 
 use api\components\BaseForm;
-use api\components\HttpException;
 use common\models\Provider;
 use common\models\Shipment;
 use common\models\ShipmentService;
 use common\models\Shop;
-use yii\helpers\ArrayHelper;
 
 class DownloadShipmentForm extends BaseForm {
     public $fsId;

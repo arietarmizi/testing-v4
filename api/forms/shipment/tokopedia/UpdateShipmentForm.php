@@ -1,7 +1,7 @@
 <?php
 
 
-namespace api\forms\shipment;
+namespace api\forms\shipment\tokopedia;
 
 
 use api\components\BaseForm;
@@ -10,7 +10,6 @@ use common\models\Shipment;
 use common\models\ShipmentService;
 use common\models\Shop;
 use yii\base\Object;
-use yii\helpers\ArrayHelper;
 
 class UpdateShipmentForm extends BaseForm {
     public $fsId;
