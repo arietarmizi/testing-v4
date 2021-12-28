@@ -6,7 +6,7 @@ use common\models\ProductCategory;
 /**
  * Handles the creation of table `{{%product_category}}`.
  */
-class m211114_181703_create_product_category_table extends Migration
+class m211114_141216_create_product_category_table extends Migration
 {
     /**
      * {@inheritdoc}
