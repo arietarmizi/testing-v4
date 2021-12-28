@@ -6,3 +6,4 @@
     • php yii migrate --migrationPath=@nadzif/yii2-file-core/src/migrations
     • php yii message common/config/i18n.php
     • php yii setup/system-app
+    • php yii setup/provider
