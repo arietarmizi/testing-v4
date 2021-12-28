@@ -200,7 +200,7 @@ class DownloadProductsForm extends BaseForm
 
 	public function setVariant($arrVariant){
 		$this->_productVariant = ProductVariant::find()
-			->where(['marketplaceProductId' => (string)$arrVariant['basic']['productID']])
+			->where(['marketplaceProductVariantId' => (string)$arrVariant['basic']['productID']])
 			->one();
 
 		if(!$this->_productVariant){
@@ -209,7 +209,7 @@ class DownloadProductsForm extends BaseForm
 
 		$this->_productVariant->sku 						= isset($arrVariant['other']['sku']) ? $arrVariant['other']['sku'] : null ;
 		$this->_productVariant->productId 			= $this->_product->id;
-		$this->_productVariant->marketplaceProductId 			= (string)$arrVariant['basic']['productID'];
+		$this->_productVariant->marketplaceProductVariantId 			= (string)$arrVariant['basic']['productID'];
 		$this->_productVariant->name 						= $arrVariant['basic']['name'];
 		$this->_productVariant->minOrder				= $arrVariant['extraAttribute']['minOrder'];
 		$this->_productVariant->description			=	isset($arrVariant['basic']['shortDesc']) ? $arrVariant['basic']['shortDesc'] : null ;
