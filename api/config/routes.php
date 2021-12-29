@@ -102,6 +102,8 @@ return [
     'order-detail/list'                      => 'order-detail/list',
     'order-detail/<id:' . $uuidPattern . '>' => 'order-detail/update',
 
+    'order-status/list' => 'order-status/list',
+
     'warehouse/store'                            => 'warehouse/store',
     'warehouse/list'                             => 'warehouse/list',
     'warehouse/<id:' . $uuidPattern . '>'        => 'warehouse/update',

@@ -17,6 +17,7 @@ use common\models\CourierInformation;
 use common\models\Customer;
 use common\models\Order;
 use common\models\OrderDetail;
+use common\models\OrderStatus;
 use common\models\ProductDiscount;
 use common\models\ProductPromo;
 use common\models\ProductVariant;
@@ -64,8 +65,12 @@ class OrderController extends Controller {
                 'class'             => ListAction::class,
                 'query'             => function () {
                     return Order::find()
+                        ->joinWith(['orderStatus'])
                         ->addOrderBy([Order::tableName() . '.createdAt' => SORT_ASC]);
                 },
+                'filters'           => [
+                    'statusCode' => ['=', OrderStatus::tableName() . '.marketplaceStatusCode']
+                ],
                 'toArrayProperties' => [
                     Order::class => [
                         'id',
@@ -73,7 +78,13 @@ class OrderController extends Controller {
                         'refInv',
                         'orderStatus'     => function ($model) {
                             /** @var Order $model */
-                            return $model->orderStatus->description;
+                            return ArrayHelper::toArray($model->orderStatus, [
+                                OrderStatus::class => [
+                                    'marketplaceId',
+                                    'marketplaceStatusCode',
+                                    'description',
+                                ]
+                            ]);
                         },
                         'customer'        => function ($model) {
                             /** @var Order $model */

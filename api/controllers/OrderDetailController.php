@@ -14,13 +14,12 @@ use api\forms\orderdetail\StoreOrderDetailForm;
 use api\forms\orderdetail\UpdateOrderDetailForm;
 use common\models\Order;
 use common\models\OrderDetail;
+use common\models\OrderStatus;
 use common\models\ProductVariant;
 use yii\helpers\ArrayHelper;
 
-class OrderDetailController extends Controller
-{
-    public function behaviors()
-    {
+class OrderDetailController extends Controller {
+    public function behaviors() {
         $behaviors                        = parent::behaviors();
         $behaviors['content-type-filter'] = [
             'class'       => ContentTypeFilter::class,
@@ -33,8 +32,7 @@ class OrderDetailController extends Controller
         return $behaviors;
     }
 
-    public function actions()
-    {
+    public function actions() {
         return [
             'store'  => [
                 'class'          => FormAction::className(),
@@ -58,26 +56,42 @@ class OrderDetailController extends Controller
                 'class'             => ListAction::class,
                 'query'             => function () {
                     return OrderDetail::find()
+                        ->joinWith(['order'])
                         ->addOrderBy([OrderDetail::tableName() . '.createdAt' => SORT_ASC]);
                 },
+                'filters'           => [
+                    'orderId' => ['=', Order::tableName() . '.id']
+                ],
                 'toArrayProperties' => [
                     OrderDetail::class => [
+                        'id',
                         'order'          => function ($model) {
+                            /** @var OrderDetail $model */
                             return ArrayHelper::toArray($model->order, [
                                 Order::class => [
                                     'id',
                                     'orderDate',
-                                    'refInv'
+                                    'refInv',
+                                    'orderStatus' => function ($model) {
+                                        /** @var Order $model */
+                                        return ArrayHelper::toArray($model->orderStatus, [
+                                            OrderStatus::class => [
+                                                'marketplaceId',
+                                                'marketplaceStatusCode',
+                                                'description',
+                                            ]
+                                        ]);
+                                    },
                                 ]
                             ]);
                         },
                         'productVariant' => function ($model) {
+                            /** @var OrderDetail $model */
                             return ArrayHelper::toArray($model->productVariant, [
                                 ProductVariant::class => [
-                                    'id',
-                                    'name',
-                                    'description',
-                                    'productDescription',
+                                    'sku',
+                                    'marketplaceProductVariantId',
+                                    'name'
                                 ]
                             ]);
                         },
@@ -88,19 +102,17 @@ class OrderDetailController extends Controller
                         'isFreeReturn',
                         'productPrice',
                         'insurancePrice',
-                        'subTotalPrice',
-                        'notes'
+                        'subTotalPrice'
                     ]
                 ],
-                'apiCodeSuccess'    => 0,
-                'apiCodeFailed'     => 400,
-                'successMessage'    => \Yii::t('app', 'Get Order Detail list Success'),
+                'apiCodeSuccess'    => ApiCode::DEFAULT_SUCCESS_CODE,
+                'apiCodeFailed'     => ApiCode::DEFAULT_FAILED_CODE,
+                'successMessage'    => \Yii::t('app', 'Get Order Detail List Success'),
             ]
         ];
     }
 
-    public function verbs()
-    {
+    public function verbs() {
         return [
             'list'   => ['get'],
             'create' => ['post'],

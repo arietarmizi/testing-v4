@@ -24,7 +24,7 @@ use common\base\ActiveRecord;
  * @property string         $createdAt
  * @property string         $updatedAt
  *
- * @property Order          $oder
+ * @property Order          $order
  * @property ProductVariant $productVariant
  */
 class OrderDetail extends ActiveRecord {
@@ -33,7 +33,7 @@ class OrderDetail extends ActiveRecord {
     }
 
     public function getProductVariant() {
-        return $this->hasMany(ProductVariant::class, ['id' => 'productVariantId']);
+        return $this->hasOne(ProductVariant::class, ['id' => 'productVariantId']);
     }
 
     public function getOrder() {

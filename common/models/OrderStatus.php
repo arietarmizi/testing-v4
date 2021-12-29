@@ -38,6 +38,6 @@ class OrderStatus extends ActiveRecord {
     }
 
     public function getMarketplace() {
-        return $this->hasOne(Marketplace::class, ['marketplaceId' => 'id']);
+        return $this->hasOne(Marketplace::class, ['id' => 'marketplaceId']);
     }
 }
