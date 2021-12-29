@@ -5,6 +5,7 @@ namespace api\controllers;
 
 
 use api\actions\ListAction;
+use api\actions\ViewAction;
 use api\components\Controller;
 use api\components\FormAction;
 use api\config\ApiCode;
@@ -15,8 +16,12 @@ use api\forms\order\UpdateOrderForm;
 use common\models\CourierInformation;
 use common\models\Customer;
 use common\models\Order;
+use common\models\OrderDetail;
 use common\models\ProductDiscount;
 use common\models\ProductPromo;
+use common\models\ProductVariant;
+use common\models\Shipment;
+use common\models\ShipmentService;
 use common\models\Warehouse;
 use yii\helpers\ArrayHelper;
 
@@ -63,18 +68,18 @@ class OrderController extends Controller {
                 },
                 'toArrayProperties' => [
                     Order::class => [
+                        'id',
                         'orderDate',
                         'refInv',
-                        'customerId',
-                        'courierId',
-                        'warehouseId',
-                        'promoId',
-                        'discountId',
-                        'orderStatus',
-                        'customer'  => function ($model) {
+                        'orderStatus'     => function ($model) {
+                            /** @var Order $model */
+                            return $model->orderStatus->description;
+                        },
+                        'customer'        => function ($model) {
+                            /** @var Order $model */
                             return ArrayHelper::toArray($model->customer, [
                                 Customer::class => [
-                                    'customerId',
+                                    'marketplaceCustomerId',
                                     'customerName',
                                     'email',
                                     'phoneNumber',
@@ -82,42 +87,53 @@ class OrderController extends Controller {
                                 ]
                             ]);
                         },
-                        'courier'   => function ($model) {
-                            return ArrayHelper::toArray($model->courier, [
-                                CourierInformation::class => [
-                                    'courierId',
-                                    'courierName',
-                                    'phoneNumber'
+                        'shipment'        => function ($model) {
+                            /** @var Order $model */
+                            return ArrayHelper::toArray($model->shipment, [
+                                Shipment::class => [
+                                    'marketplaceShipmentId',
+                                    'name',
                                 ]
                             ]);
                         },
-                        'warehouse' => function ($model) {
+                        'shipmentService' => function ($model) {
+                            /** @var Order $model */
+                            return ArrayHelper::toArray($model->shipmentService, [
+                                ShipmentService::class => [
+                                    'marketplaceShipmentServiceId',
+                                    'name'
+                                ]
+                            ]);
+                        },
+                        'warehouse'       => function ($model) {
+                            /** @var Order $model */
                             return ArrayHelper::toArray($model->warehouse, [
                                 Warehouse::class => [
                                     'name',
-                                    'description',
                                     'address'
                                 ]
                             ]);
                         },
-                        'promo'     => function ($model) {
-                            return ArrayHelper::toArray($model->promo, [
+                        'productPromo'    => function ($model) {
+                            /** @var Order $model */
+                            return ArrayHelper::toArray($model->productPromo, [
                                 ProductPromo::class => [
+                                    'productVariantId',
                                     'minQuantity',
                                     'maxQuantity',
                                     'defaultPrice'
                                 ]
                             ]);
                         },
-                        'discount'  => function ($model) {
-                            return ArrayHelper::toArray($model->discount, [
+                        'productDiscount' => function ($model) {
+                            /** @var Order $model */
+                            return ArrayHelper::toArray($model->productDiscount, [
                                 ProductDiscount::class => [
                                     'discountPrice',
                                     'discountPercentage',
                                 ]
                             ]);
                         },
-                        'orderStatus'
                     ]
                 ],
                 'apiCodeSuccess'    => 0,
@@ -131,6 +147,115 @@ class OrderController extends Controller {
                 'messageFailed'  => \Yii::t('app', 'Download Order Failed.'),
                 'apiCodeSuccess' => ApiCode::DEFAULT_SUCCESS_CODE,
                 'apiCodeFailed'  => ApiCode::DEFAULT_FAILED_CODE,
+            ],
+            'detail'   => [
+                'class'             => ViewAction::class,
+                'query'             => function () {
+                    return Order::find();
+                },
+                'toArrayProperties' => [
+                    Order::class => [
+                        'id',
+                        'orderDate',
+                        'refInv',
+                        'orderStatus'     => function ($model) {
+                            /** @var Order $model */
+                            return $model->orderStatus->description;
+                        },
+                        'customer'        => function ($model) {
+                            /** @var Order $model */
+                            return ArrayHelper::toArray($model->customer, [
+                                Customer::class => [
+                                    'marketplaceCustomerId',
+                                    'customerName',
+                                    'email',
+                                    'phoneNumber',
+                                    'address'
+                                ]
+                            ]);
+                        },
+                        'shipment'        => function ($model) {
+                            /** @var Order $model */
+                            return ArrayHelper::toArray($model->shipment, [
+                                Shipment::class => [
+                                    'marketplaceShipmentId',
+                                    'name',
+                                    'isAvailable'
+                                ]
+                            ]);
+                        },
+                        'shipmentService' => function ($model) {
+                            /** @var Order $model */
+                            return ArrayHelper::toArray($model->shipmentService, [
+                                ShipmentService::class => [
+                                    'marketplaceShipmentServiceId',
+                                    'name',
+                                    'isAvailable'
+                                ]
+                            ]);
+                        },
+                        'warehouse'       => function ($model) {
+                            /** @var Order $model */
+                            return ArrayHelper::toArray($model->warehouse, [
+                                Warehouse::class => [
+                                    'name',
+                                    'address'
+                                ]
+                            ]);
+                        },
+                        'productPromo'    => function ($model) {
+                            /** @var Order $model */
+                            return ArrayHelper::toArray($model->productPromo, [
+                                ProductPromo::class => [
+                                    'productVariantId',
+                                    'minQuantity',
+                                    'maxQuantity',
+                                    'defaultPrice'
+                                ]
+                            ]);
+                        },
+                        'productDiscount' => function ($model) {
+                            /** @var Order $model */
+                            return ArrayHelper::toArray($model->productDiscount, [
+                                ProductDiscount::class => [
+                                    'discountPrice',
+                                    'discountPercentage',
+                                ]
+                            ]);
+                        },
+                        'orderDetails'    => function ($model) {
+                            /** @var Order $model */
+                            return ArrayHelper::toArray($model->orderDetails, [
+                                OrderDetail::class => [
+                                    'id',
+                                    'productVariant' => function ($model) {
+                                        /** @var OrderDetail $model */
+                                        return ArrayHelper::toArray($model->productVariant, [
+                                            ProductVariant::class => [
+                                                'sku',
+                                                'marketplaceProductVariantId',
+                                                'name'
+                                            ]
+                                        ]);
+                                    },
+                                    'quantity',
+                                    'weight',
+                                    'height',
+                                    'totalWeight',
+                                    'isFreeReturn',
+                                    'productPrice',
+                                    'insurancePrice',
+                                    'subTotalPrice'
+                                ]
+                            ]);
+                        },
+                        'createdAt',
+                        'updatedAt'
+                    ]
+                ],
+                'apiCodeSuccess'    => ApiCode::DEFAULT_SUCCESS_CODE,
+                'apiCodeFailed'     => ApiCode::DEFAULT_FAILED_CODE,
+                'successMessage'    => \Yii::t('app', 'View Order Detail Success'),
             ]
         ];
     }
@@ -141,6 +266,7 @@ class OrderController extends Controller {
             'update'   => ['post'],
             'delete'   => ['post'],
             'list'     => ['get'],
+            'detail'   => ['get'],
             'download' => ['post']
         ];
     }

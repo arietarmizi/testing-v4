@@ -93,6 +93,7 @@ return [
 
     'order/store'                            => 'order/store',
     'order/list'                             => 'order/list',
+    'order/detail/<id:' . $uuidPattern . '>' => 'order/detail',
     'order/<id:' . $uuidPattern . '>'        => 'order/update',
     'order/delete/<id:' . $uuidPattern . '>' => 'order/delete',
     'order/download'                         => 'order/download',

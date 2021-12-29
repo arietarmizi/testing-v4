@@ -9,37 +9,42 @@ use common\base\ActiveRecord;
 /**
  * Class Order
  * @package common\models
- * @property string $id
- * @property string $orderId
- * @property string $orderDate
- * @property string $shopId
- * @property string $refInv
- * @property string $customerId
- * @property string $shipmentId
- * @property string $shipmentServiceId
- * @property string $warehouseId
- * @property string $promoId
- * @property string $discountId
- * @property string $orderStatusId
- * @property string $createdAt
- * @property string $updatedAt
+ * @property string          $id
+ * @property string          $orderId
+ * @property string          $orderDate
+ * @property string          $shopId
+ * @property string          $refInv
+ * @property string          $customerId
+ * @property string          $shipmentId
+ * @property string          $shipmentServiceId
+ * @property string          $warehouseId
+ * @property string          $promoId
+ * @property string          $discountId
+ * @property string          $orderStatusId
+ * @property string          $createdAt
+ * @property string          $updatedAt
  *
- * @property OrderDetail[] $orderDetails
+ * @property Customer        $customer
+ * @property Shipment        $shipment
+ * @property ShipmentService $shipmentService
+ * @property Warehouse       $warehouse
+ * @property ProductPromo    $productPromo
+ * @property ProductDiscount $productDiscount
+ * @property OrderDetail[]   $orderDetails
+ * @property OrderStatus     $orderStatus
  */
-class Order extends ActiveRecord
-{
-    const ORDER_STATUS_PACKING   = 'packing';
-    const ORDER_STATUS_SUCCESS   = 'success';
-    const ORDER_STATUS_PENDING   = 'pending';
+class Order extends ActiveRecord {
+    const ORDER_STATUS_PACKING = 'packing';
+    const ORDER_STATUS_SUCCESS = 'success';
+    const ORDER_STATUS_PENDING = 'pending';
     const ORDER_STATUS_CANCELLED = 'cancelled';
-    const ORDER_STATUS_FAILED    = 'failed';
+    const ORDER_STATUS_FAILED = 'failed';
 
-    const STATUS_ACTIVE   = 'active';
+    const STATUS_ACTIVE = 'active';
     const STATUS_INACTIVE = 'inactive';
-    const STATUS_DELETED  = 'deleted';
+    const STATUS_DELETED = 'deleted';
 
-    public static function orderStatuses()
-    {
+    public static function orderStatuses() {
         return [
             self::ORDER_STATUS_PACKING   => \Yii::t('app', 'Packing'),
             self::ORDER_STATUS_SUCCESS   => \Yii::t('app', 'Success'),
@@ -49,56 +54,46 @@ class Order extends ActiveRecord
         ];
     }
 
-    public static function statuses()
-    {
+    public static function statuses() {
         return [
             self::STATUS_ACTIVE   => \Yii::t('app', 'Active'),
             self::STATUS_INACTIVE => \Yii::t('app', 'Inactive'),
         ];
     }
 
-    public static function tableName()
-    {
+    public static function tableName() {
         return '{{%order}}';
     }
 
-    public function getCustomer()
-    {
-        return $this->hasOne(Customer::class, ['customerId' => 'id']);
+    public function getCustomer() {
+        return $this->hasOne(Customer::class, ['id' => 'customerId']);
     }
 
-    public function getShipment()
-    {
-        return $this->hasOne(Shipment::class, ['shipmentId' => 'id']);
+    public function getShipment() {
+        return $this->hasOne(Shipment::class, ['id' => 'shipmentId']);
     }
 
-    public function getShipmentService()
-    {
-        return $this->hasOne(ShipmentService::class, ['shipmentServiceId' => 'id']);
+    public function getShipmentService() {
+        return $this->hasOne(ShipmentService::class, ['id' => 'shipmentServiceId']);
     }
 
-    public function getWarehouse()
-    {
+    public function getWarehouse() {
         return $this->hasOne(Warehouse::class, ['id' => 'warehouseId']);
     }
 
-    public function getPromo()
-    {
+    public function getProductPromo() {
         return $this->hasOne(ProductPromo::class, ['id' => 'promoId']);
     }
 
-    public function getDiscount()
-    {
+    public function getProductDiscount() {
         return $this->hasOne(ProductDiscount::class, ['id' => 'discountId']);
     }
 
-    public function getOrderDetails()
-    {
+    public function getOrderDetails() {
         return $this->hasMany(OrderDetail::class, ['orderId' => 'id']);
     }
 
-    public function getOrderStatus()
-    {
+    public function getOrderStatus() {
         return $this->hasOne(OrderStatus::class, ['id' => 'orderStatusId']);
     }
 }
