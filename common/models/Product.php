@@ -17,6 +17,7 @@ use PhpOffice\PhpSpreadsheet\Calculation\Category;
  * @property string  $productId
  * @property string  $shopId
  * @property string  $productCategoryId
+ * @property String  $categoryBreadcrumb
  * @property string  $sku
  * @property string  $code
  * @property string  $name
@@ -32,8 +33,8 @@ use PhpOffice\PhpSpreadsheet\Calculation\Category;
  * @property string  $updatedAt
  *
  * @property ProductVariant[] $productVariants
- * @property ProductImages $productImages
- * @property Category $productCategory
+ * @property ProductImages[] $productImages
+ * @property ProductCategory $productCategory
  * @property double $minPrice
  * @property double $maxPrice
  */
@@ -46,6 +47,8 @@ class Product extends ActiveRecord
 
     const CONDITION_NEW    = 'new';
     const CONDITION_SECOND = 'second';
+
+    public $_categoryBreadcrumb;
 
     public static function tableName()
     {
@@ -75,22 +78,41 @@ class Product extends ActiveRecord
         return $this->hasOne(ProductCategory::class, ['id' => 'productCategoryId']);
     }
 
+    public function getCategoryBreadcrumb($counter = 0,$categoryBreadcrumb = ''){
+    	$parentId = $this->productCategoryId;
+
+
+		/** @var ProductCategory $category */
+		$category = ProductCategory::find()
+			->where(['id' => $parentId])
+			->one();
+
+		if($counter == 0){
+			$categoryBreadcrumb = $category->name;
+		}else{
+			$categoryBreadcrumb = $category->name." > ".$categoryBreadcrumb;
+		}
+
+		$this->_categoryBreadcrumb = $categoryBreadcrumb;
+		if($category->parentId != null){
+			$counter++;
+			$this->productCategoryId = $category->parentId;
+			$this->getCategoryBreadcrumb($counter,$categoryBreadcrumb);
+		}
+
+		return $this->_categoryBreadcrumb;
+
+	}
+
     public function getShop()
     {
         return $this->hasOne(Shop::class, ['marketplaceShopId' => 'shopId']);
     }
 
-    public function getProductImages()
-    {
-//			return $this->hasMany(ProductImages::class, ['productId' => 'id']);
-
-			return ProductImages::find()
-				->where([
-					'productId' => $this->id,
-					'isPrimary' => 1
-				])
-				->one();
-    }
+    public function getProductImages(){
+    	return $this->hasMany(ProductImages::class,['ProductId' => 'id'])
+			->orderBy(['isPrimary' => SORT_DESC]);
+	}
 
     public  function getProductVariants()
 		{
