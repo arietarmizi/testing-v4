@@ -67,26 +67,12 @@ class ProductController extends Controller
 			'list'      => [
 				'class'             => ListAction::class,
 				'query'             => function () {
-					$filters        = \Yii::$app->request->get();
-					$query =  Product::find()->where([Product::tableName() . '.status' => Product::STATUS_ACTIVE]);
-
-					unset( $filters['page'], $filters['per-page'], $filters['sort']);
-
-					if ($filters) {
-						foreach ($filters as $key => $value) {
-							if ($key == 'shopId') {
-								$query->andWhere([Product::tableName() . '.' . $key => $value]);
-							} else {
-								$query->andWhere(['like', Product::tableName() . '.' . $key, $value]);
-							}
-						}
-					}
-
-					$query->addOrderBy([Product::tableName() . '.name' => SORT_ASC]);
-
-
-					return $query;
+					return Product::find()
+                        ->where([Product::tableName() . '.status' => Product::STATUS_ACTIVE]);
 				},
+                'filters' => [
+                    'shopId' => ['=', Product::tableName() . '.shopId']
+                ],
 				'toArrayProperties' => [
 					Product::class => [
 						'id',
@@ -103,6 +89,10 @@ class ProductController extends Controller
 						'maxPrice' => function ($model) {
 							return $model->maxPrice;
 						},
+                        'totalStock' => function ($model) {
+		                    /** @var Product $model */
+                            return (int)$model->totalStock;
+                        },
 						'productCategory' => function ($model) {
 							return ArrayHelper::toArray($model->productCategory, [
 								ProductCategory::class => [
@@ -167,6 +157,10 @@ class ProductController extends Controller
 						'maxPrice' => function ($model) {
 							return $model->maxPrice;
 						},
+                        'totalStock' => function ($model) {
+                            /** @var Product $model */
+                            return (int)$model->totalStock;
+                        },
 						'productCategory' => function ($model) {
 							return ArrayHelper::toArray($model->productCategory, [
 								ProductCategory::class => [
