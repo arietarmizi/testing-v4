@@ -72,6 +72,9 @@ class ProductVariantController extends Controller
                     return ProductVariant::find()
                         ->joinWith(['product']);
                 },
+                'filters' => [
+                  'productId', ['=', ProductVariant::tableName() . '.productId']
+                ],
                 'toArrayProperties' => [
                     ProductVariant::class => [
                         'id',
