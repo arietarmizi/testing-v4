@@ -31,6 +31,7 @@ return [
     'product/list'                             => 'product/list',
     'product/add-image'                        => 'product/add-image',
     'product/download'                         => 'product/download',
+    'product/detail/<id:' . $uuidPattern . '>' => 'product/detail',
 
     'product-variant/store'                            => 'product-variant/store',
     'product-variant/<id:' . $uuidPattern . '>'        => 'product-variant/update',
