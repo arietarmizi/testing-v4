@@ -37,7 +37,8 @@ return [
     'product-variant/<id:' . $uuidPattern . '>'        => 'product-variant/update',
     'product-variant/delete/<id:' . $uuidPattern . '>' => 'product-variant/delete',
     'product-variant/list'                             => 'product-variant/list',
-    'product-variant/add-image'                        => 'product-variant/add-image',
+	'product-variant/add-image'                        => 'product-variant/add-image',
+	'product-variant/detail/<id:' . $uuidPattern . '>' => 'product-variant/detail',
 
     'product-bundle/store'                            => 'product-bundle/store',
     'product-bundle/<id:' . $uuidPattern . '>'        => 'product-bundle/update',
