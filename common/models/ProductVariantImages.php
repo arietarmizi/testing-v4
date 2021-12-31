@@ -10,6 +10,7 @@ use nadzif\file\models\File;
  * @package common\models
  * @property string  $id
  * @property string  $productVariantId
+ * @property string  $marketplacePicId
  * @property string  $type
  * @property string  $fileId
  * @property boolean $isPrimary

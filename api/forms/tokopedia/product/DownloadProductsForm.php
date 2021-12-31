@@ -117,7 +117,13 @@ class DownloadProductsForm extends BaseForm {
                 if ($remoteProduct['pictures'] && is_array($remoteProduct['pictures'])) {
 
                     foreach ($remoteProduct['pictures'] as $picture) {
-                        $this->_productImages = new ProductImages();
+                    	$this->_productImages = ProductImages::find()
+							->where(['marketplacePicId' => $picture['picID']])
+							->one();
+
+                    	if(!$this->_productImages){
+							$this->_productImages = new ProductImages();
+						}
 
                         if ($picture['status'] == 2) {
                             $this->_productImages->isPrimary = 1;
@@ -125,9 +131,10 @@ class DownloadProductsForm extends BaseForm {
                             $this->_productImages->isPrimary = 0;
                         }
 
-                        $this->_productImages->productId    = $this->_product->id;
-                        $this->_productImages->originalURL  = $picture['OriginalURL'];
-                        $this->_productImages->thumbnailURL = $picture['ThumbnailURL'];
+                        $this->_productImages->productId    	= $this->_product->id;
+                        $this->_productImages->marketplacePicId = $picture['picID'];
+                        $this->_productImages->originalURL  	= $picture['OriginalURL'];
+                        $this->_productImages->thumbnailURL 	= $picture['ThumbnailURL'];
 
                         $success &= $this->_productImages->save() && $this->_productImages->refresh();
                     }
@@ -163,8 +170,17 @@ class DownloadProductsForm extends BaseForm {
                             foreach ($variant[0]['pictures'] as $picture) {
 
                                 if ($picture['status'] != 1) {
-                                    $this->_productVariantImages                   = new ProductVariantImages();
+
+									$this->_productVariantImages = ProductVariantImages::find()
+										->where(['marketplacePicId' => $picture['picID']])
+										->one();
+
+									if(!$this->_productVariantImages){
+										$this->_productVariantImages = new ProductVariantImages();
+									}
+
                                     $this->_productVariantImages->isPrimary        = 1;
+                                    $this->_productVariantImages->marketplacePicId = $picture['picID'];
                                     $this->_productVariantImages->productVariantId = $this->_productVariant->id;
                                     $this->_productVariantImages->originalURL      = $picture['OriginalURL'];
                                     $this->_productVariantImages->thumbnailURL     = $picture['ThumbnailURL'];

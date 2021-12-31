@@ -49,7 +49,9 @@ use common\base\ActiveRecord;
  * @property string  $createdAt
  * @property string  $updatedAt
  *
- * @property ProductImages[] $productImages
+ * @property ProductVariantImages[] $images
+ * @property Product $product
+ * @property StockManagement $stock
  */
 class ProductVariant extends ActiveRecord
 {
@@ -108,9 +110,13 @@ class ProductVariant extends ActiveRecord
         return $this->hasOne(Product::class, ['id' => 'productId']);
     }
 
-    public function getProductImages()
+    public function getImages()
     {
-			return $this->hasMany(ProductImages::class, ['productVariantId' => 'id']);
+    	return $this->hasMany(ProductVariantImages::class, ['productVariantId' => 'id']);
     }
+
+    public function getStock(){
+    	return $this->hasOne(StockManagement::className(), ['productVariantId' => 'id']);
+	}
 
 }

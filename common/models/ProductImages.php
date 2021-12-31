@@ -13,6 +13,7 @@ use yii\helpers\ArrayHelper;
  * @package common\models
  * @property string  $id
  * @property string  $productId
+ * @property string  $marketplacePicId
  * @property string  $type
  * @property string  $fileId
  * @property boolean $isPrimary
