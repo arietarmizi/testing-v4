@@ -21,6 +21,7 @@ use common\base\ActiveRecord;
  * @property string          $promoId
  * @property string          $discountId
  * @property string          $orderStatusId
+ * @property integer          $total
  * @property string          $createdAt
  * @property string          $updatedAt
  *
@@ -96,4 +97,10 @@ class Order extends ActiveRecord {
     public function getOrderStatus() {
         return $this->hasOne(OrderStatus::class, ['id' => 'orderStatusId']);
     }
+
+	public function getTotal() {
+		return OrderDetail::find()
+			->where([OrderDetail::tableName() . '.orderId' => $this->id])
+			->sum(OrderDetail::tableName() . '.subTotalPrice');
+	}
 }

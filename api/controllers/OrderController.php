@@ -145,6 +145,7 @@ class OrderController extends Controller {
                                 ]
                             ]);
                         },
+						'total'
                     ]
                 ],
                 'apiCodeSuccess'    => 0,
