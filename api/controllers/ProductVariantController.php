@@ -5,6 +5,7 @@ namespace api\controllers;
 
 
 use api\actions\ListAction;
+use api\actions\ViewAction;
 use api\components\Controller;
 use api\components\FormAction;
 use api\components\HttpException;
@@ -17,6 +18,8 @@ use api\forms\productvariant\UpdateProductVariantForm;
 use common\models\Product;
 use common\models\ProductImages;
 use common\models\ProductVariant;
+use common\models\ProductVariantImages;
+use common\models\StockManagement;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 
@@ -80,15 +83,17 @@ class ProductVariantController extends Controller
                         'id',
                         'product' => function ($model) {
                             /** @var ProductVariant $model */
-                            return [
-                                'id'                 => $model->productId,
-                                'code'               => $model->product->code,
-                                'name'               => $model->product->name,
-                                'condition'          => $model->product->condition,
-                                'productDescription' => $model->product->productDescription,
-                                'description'        => $model->product->description,
-                                'isMaster'           => $model->product->isMaster,
-                            ];
+                            return ArrayHelper::toArray($model->product, [
+                            	Product::class => [
+									'id',
+									'code',
+									'name',
+									'condition',
+									'productDescription',
+									'description',
+									'isMaster',
+								]
+							]);
                         },
                         'sku',
                         'name',
@@ -111,13 +116,93 @@ class ProductVariantController extends Controller
                         'isWholesale',
                         'isFreeReturn',
                         'isMustInsurance',
+						'stock' => function ($model) {
+							/** @var ProductVariant $model */
+							return ArrayHelper::toArray($model->stock, [
+								StockManagement::class => [
+									'id',
+									'availableStock',
+								]
+							]);
+						},
                         'status'
                     ]
                 ],
                 'apiCodeSuccess'    => 0,
                 'apiCodeFailed'     => 400,
                 'successMessage'    => \Yii::t('app', 'Get product variant list success'),
-            ]
+            ],
+			'detail' => [
+				'class'             => ViewAction::class,
+				'query'             => function () {
+					return ProductVariant::find()
+						->joinWith(['product']);
+				},
+				'toArrayProperties' => [
+					ProductVariant::class => [
+						'id',
+						'product' => function ($model) {
+							/** @var ProductVariant $model */
+							return ArrayHelper::toArray($model->product, [
+								Product::class => [
+									'id',
+									'code',
+									'name',
+									'condition',
+									'productDescription',
+									'description',
+									'isMaster',
+								]
+							]);
+						},
+						'sku',
+						'name',
+						'isShelfLife',
+						'duration',
+						'inboundLimit',
+						'outboundLimit',
+						'minOrder',
+						'productDescription',
+						'description',
+						'defaultPrice',
+						'length',
+						'width',
+						'height',
+						'weight',
+						'barcode',
+						'isPreOrder',
+						'minPreOrderDay',
+						'discount',
+						'isWholesale',
+						'isFreeReturn',
+						'isMustInsurance',
+						'stock' => function ($model) {
+							/** @var ProductVariant $model */
+							return ArrayHelper::toArray($model->stock, [
+								StockManagement::class => [
+									'id',
+									'availableStock',
+								]
+							]);
+						},
+						'images' => function ($model) {
+							/** @var ProductVariant $model */
+							return ArrayHelper::toArray($model->images, [
+								ProductVariantImages::class => [
+									'id',
+									'isPrimary',
+									'originalURL',
+									'thumbnailURL',
+								]
+							]);
+						},
+						'status'
+					]
+				],
+				'apiCodeSuccess'    => 0,
+				'apiCodeFailed'     => 400,
+				'successMessage'    => \Yii::t('app', 'Get product variant list success'),
+			]
         ];
     }
 
